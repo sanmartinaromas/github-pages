@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saphirus - Aromatizantes de Ambiente</title>
+    <style>
+        /* Estilos CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        
+        header {
+            background-color: #6a0dad;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .slogan {
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        nav {
+            background-color: #7b1fa2;
+            padding: 15px 0;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 15px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #f3e5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .hero {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://via.placeholder.com/1200x400');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .hero-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .product-image {
+            height: 200px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .product-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #6a0dad;
+        }
+        
+        .product-description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #e91e63;
+            margin-bottom: 15px;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantity-input {
+            width: 50px;
+            height: 30px;
+            text-align: center;
+            margin: 0 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .add-to-cart {
+            width: 100%;
+            padding: 10px;
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #7b1fa2;
+        }
+        
+        .cart-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .cart-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #6a0dad;
+            border-bottom: 2px solid #f3e5f5;
+            padding-bottom: 10px;
+        }
+        
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-item-image {
+            width: 50px;
+            height: 50px;
+            background-color: #f5f5f5;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .cart-item-image img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        
+        .cart-item-name {
+            font-weight: bold;
+        }
+        
+        .cart-item-price {
+            color: #e91e63;
+            font-weight: bold;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-item-quantity input {
+            width: 40px;
+            text-align: center;
+            margin: 0 5px;
+        }
+        
+        .remove-item {
+            color: #f44336;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+        
+        .cart-total {
+            text-align: right;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .cart-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .checkout-btn {
+            padding: 12px 25px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #388e3c;
+        }
+        
+        .whatsapp-btn {
+            padding: 12px 25px;
+            background-color: #25d366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .whatsapp-btn i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128c7e;
+        }
+        
+        footer {
+            background-color: #6a0dad;
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #f3e5f5;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .footer-section a:hover {
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f3e5f5;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 5px 0;
+            }
+            
+            .hero {
+                height: 300px;
+            }
+            
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cart-item-quantity {
+                margin-top: 10px;
+            }
+            
+            .cart-actions {
+                flex-direction: column;
+            }
+            
+            .whatsapp-btn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">SAPHIRUS</div>
+        <div class="slogan">Fragancias que transforman tus espacios</div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#productos">Productos</a></li>
+            <li><a href="#nosotros">Nosotros</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <section id="inicio" class="hero">
+            <div class="hero-content">
+                <h2>Aromatizantes Saphirus de la más alta calidad</h2>
+                <p>Descubre nuestra exclusiva línea de aromatizantes para hogar, oficina y automóvil. Fragancias únicas que perduran.</p>
+            </div>
+        </section>
+        
+        <section id="productos">
+            <h2 style="margin-bottom: 30px; color: #6a0dad;">Nuestros Productos</h2>
+            <div class="products">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/200" alt="Aromatizante Lavanda">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Lavanda Relax</h3>
+                        <p class="product-description">Fragancia relajante de lavanda perfecta para dormitorios y espacios de descanso.</p>
+                        <div class="product-price">$12.99</div>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn minus" onclick="decreaseQuantity(this)">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+                        </div>
+                        <button class="add-to-cart" onclick="addToCart(this)" data-id="1" data-name="Lavanda Relax" data-price="12.99" data-image="https://via.placeholder.com/200">Añadir al Carrito</button>
+                    </div>
+                </div>
+                
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/200" alt="Aromatizante Cítrico">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Energía Cítrica</h3>
+                        <p class="product-description">Mezcla revitalizante de limón, naranja y pomelo para espacios activos.</p>
+                        <div class="product-price">$11.99</div>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn minus" onclick="decreaseQuantity(this)">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+                        </div>
+                        <button class="add-to-cart" onclick="addToCart(this)" data-id="2" data-name="Energía Cítrica" data-price="11.99" data-image="https://via.placeholder.com/200">Añadir al Carrito</button>
+                    </div>
+                </div>
+                
+                <!-- Producto 3 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/200" alt="Aromatizante Vainilla">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Vainilla Comfort</h3>
+                        <p class="product-description">Fragancia cálida y acogedora de vainilla para crear ambientes hogareños.</p>
+                        <div class="product-price">$13.99</div>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn minus" onclick="decreaseQuantity(this)">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+                        </div>
+                        <button class="add-to-cart" onclick="addToCart(this)" data-id="3" data-name="Vainilla Comfort" data-price="13.99" data-image="https://via.placeholder.com/200">Añadir al Carrito</button>
+                    </div>
+                </div>
+                
+                <!-- Producto 4 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/200" alt="Aromatizante Bambú">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Bambú Fresco</h3>
+                        <p class="product-description">Aroma fresco y limpio de bambú para baños y áreas comunes.</p>
+                        <div class="product-price">$10.99</div>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn minus" onclick="decreaseQuantity(this)">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+                        </div>
+                        <button class="add-to-cart" onclick="addToCart(this)" data-id="4" data-name="Bambú Fresco" data-price="10.99" data-image="https://via.placeholder.com/200">Añadir al Carrito</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cart-section">
+            <h2 class="cart-title">Tu Carrito de Compras</h2>
+            <div class="cart-items" id="cart-items">
+                <!-- Los items del carrito se añadirán aquí dinámicamente -->
+                <p id="empty-cart-message">Tu carrito está vacío</p>
+            </div>
+            <div class="cart-total">
+                Total: $<span id="cart-total">0.00</span>
+            </div>
+            <div class="cart-actions">
+                <button class="checkout-btn" id="clear-cart">Vaciar Carrito</button>
+                <button class="whatsapp-btn" id="whatsapp-order"><i class="fab fa-whatsapp"></i> Enviar Pedido por WhatsApp</button>
+            </div>
+        </section>
+        
+        <section id="nosotros" style="margin-bottom: 40px;">
+            <h2 style="margin-bottom: 20px; color: #6a0dad;">Sobre Saphirus</h2>
+            <p style="margin-bottom: 15px; line-height: 1.6;">Saphirus es una marca líder en aromatizantes de ambiente, comprometida con ofrecer productos de la más alta calidad que transforman tus espacios en lugares agradables y acogedores.</p>
+            <p style="line-height: 1.6;">Nuestras fragancias son desarrolladas por expertos perfumistas utilizando ingredientes naturales y tecnología de última generación para garantizar una experiencia olfativa excepcional.</p>
+        </section>
+        
+        <section id="contacto" style="margin-bottom: 40px;">
+            <h2 style="margin-bottom: 20px; color: #6a0dad;">Contacto</h2>
+            <p style="margin-bottom: 10px;"><strong>Email:</strong> info@saphirus.com</p>
+            <p style="margin-bottom: 10px;"><strong>Teléfono:</strong> +1 234 567 890</p>
+            <p><strong>Dirección:</strong> Calle Ficticia 123, Ciudad Imaginaria</p>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Saphirus</h3>
+                <p>Fragancias que transforman tus espacios</p>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <a href="#inicio">Inicio</a>
+                <a href="#productos">Productos</a>
+                <a href="#nosotros">Nosotros</a>
+                <a href="#contacto">Contacto</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p>info@saphirus.com</p>
+                <p>+1 234 567 890</p>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 Saphirus. Todos los derechos reservados.
+        </div>
+    </footer>
+    
+    <script>
+        // Carrito de compras
+        let cart = [];
+        
+        // Función para aumentar la cantidad
+        function increaseQuantity(button) {
+            const input = button.parentElement.querySelector('.quantity-input');
+            input.value = parseInt(input.value) + 1;
+        }
+        
+        // Función para disminuir la cantidad
+        function decreaseQuantity(button) {
+            const input = button.parentElement.querySelector('.quantity-input');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+        
+        // Función para añadir producto al carrito
+        function addToCart(button) {
+            const productCard = button.closest('.product-card');
+            const quantity = parseInt(productCard.querySelector('.quantity-input').value);
+            const productId = button.getAttribute('data-id');
+            const productName = button.getAttribute('data-name');
+            const productPrice = parseFloat(button.getAttribute('data-price'));
+            const productImage = button.getAttribute('data-image');
+            
+            // Verificar si el producto ya está en el carrito
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: quantity,
+                    image: productImage
+                });
+            }
+            
+            updateCart();
+            
+            // Mostrar notificación
+            alert(`Se añadieron ${quantity} unidad(es) de ${productName} al carrito`);
+        }
+        
+        // Función para actualizar el carrito
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const emptyCartMessage = document.getElementById('empty-cart-message');
+            const cartTotalElement = document.getElementById('cart-total');
+            
+            // Limpiar el contenedor
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                cartTotalElement.textContent = '0.00';
+                return;
+            }
+            
+            emptyCartMessage.style.display = 'none';
+            
+            let total = 0;
+            
+            // Añadir cada item al carrito
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'cart-item';
+                cartItemElement.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-image">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div>
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">$${item.price.toFixed(2)} c/u</div>
+                        </div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn minus" onclick="updateCartItemQuantity('${item.id}', -1)">-</button>
+                        <input type="number" value="${item.quantity}" min="1" onchange="updateCartItemQuantityInput('${item.id}', this)">
+                        <button class="quantity-btn plus" onclick="updateCartItemQuantity('${item.id}', 1)">+</button>
+                        <span class="remove-item" onclick="removeCartItem('${item.id}')"><i class="fas fa-trash"></i></span>
+                    </div>
+                    <div class="cart-item-total">$${itemTotal.toFixed(2)}</div>
+                `;
+                
+                cartItemsContainer.appendChild(cartItemElement);
+            });
+            
+            // Actualizar total
+            cartTotalElement.textContent = total.toFixed(2);
+        }
+        
+        // Función para actualizar cantidad de item en el carrito (con botones + y -)
+        function updateCartItemQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                const newQuantity = item.quantity + change;
+                
+                if (newQuantity >= 1) {
+                    item.quantity = newQuantity;
+                    updateCart();
+                }
+            }
+        }
+        
+        // Función para actualizar cantidad de item en el carrito (con input)
+        function updateCartItemQuantityInput(productId, input) {
+            const item = cart.find(item => item.id === productId);
+            const newQuantity = parseInt(input.value);
+            
+            if (item && newQuantity >= 1) {
+                item.quantity = newQuantity;
+                updateCart();
+            } else {
+                input.value = item.quantity;
+            }
+        }
+        
+        // Función para eliminar item del carrito
+        function removeCartItem(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+        
+        // Función para vaciar el carrito
+        function clearCart() {
+            cart = [];
+            updateCart();
+        }
+        
+        // Función para enviar pedido por WhatsApp
+        function sendWhatsAppOrder() {
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío. Añade productos antes de enviar el pedido.');
+                return;
+            }
+            
+            let message = '¡Hola! Quiero hacer un pedido de los siguientes productos:\n\n';
+            
+            cart.forEach(item => {
+                message += `- ${item.name} (${item.quantity} unidad(es)): $${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            
+            message += `\nTotal: $${document.getElementById('cart-total').textContent}\n\n`;
+            message += 'Por favor, confirmen disponibilidad y forma de pago. ¡Gracias!';
+            
+            // Codificar el mensaje para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Número de WhatsApp (reemplaza con tu número)
+            const whatsappNumber = '5491122334455';
+            
+            // Crear el enlace de WhatsApp
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            
+            // Abrir en nueva pestaña
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('clear-cart').addEventListener('click', clearCart);
+            document.getElementById('whatsapp-order').addEventListener('click', sendWhatsAppOrder);
+        });
+    </script>
+</body>
+</html>
