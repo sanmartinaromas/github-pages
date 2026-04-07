@@ -1,1 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Martin Aromas - Sistema Integral</title>
+    <!-- Librerías -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS para Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        aroma: { 500: '#3e8e89', 400: '#58aaa5', 600: '#31726f', 50: '#f0f9f9' }
+                    }
+                }
+            }
+        }
+    </script>
 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+        body { font-family: 'Montserrat', sans-serif; background-color: #fafcfc; color: #264b4a; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -15px rgba(88, 170, 165, 0.2); }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #3e8e89; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const LOGO_URL = "https://lh3.googleusercontent.com/d/14d7ZtlSz-x6WwwDtHf6ks_nVCxYstwd1";
+        const CLAVE_ADMIN = "Hola4088";
+        const WHATSAPP = "5492634733777";
+        const IMG_DEFAULT = "https://images.unsplash.com/photo-1602928321679-560bb453f190?w=500";
+        const FORMSPREE_ID = "xgopdoap"; 
+
+        const Icon = ({ name, className = "w-5 h-5" }) => {
+            const iconRef = useRef(null);
+            useEffect(() => {
+                if (window.lucide && iconRef.current) {
+                    iconRef.current.innerHTML = '';
+                    const iconElement = document.createElement('i');
+                    iconElement.setAttribute('data-lucide', name);
+                    iconElement.className = className;
+                    iconRef.current.appendChild(iconElement);
+                    window.lucide.createIcons();
+                }
+            }, [name, className]);
+            return <div ref={iconRef} className="inline-flex items-center justify-center pointer-events-none" />;
+        };
+
+        function App() {
+            const [vista, setVista] = useState('inicio');
+            const [tabAdmin, setTabAdmin] = useState('productos');
+            const [cargandoEnvio, setCargandoEnvio] = useState(false);
+            
+            // Estado de Productos
+            const [productos, setProductos] = useState([
+                // LÍNEA HOGAR — Aromatizador de Telas y Ambientes (120 ml)
+                { id: 1,   name: "Aromatizador Acqua 120ml",                    price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 2,   name: "Aromatizador Ananá y Coco 120ml",              price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 3,   name: "Aromatizador Azahares 120ml",                  price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 4,   name: "Aromatizador Burbujas Jabón 120ml",            price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 5,   name: "Aromatizador Coco y Vainilla 120ml",           price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 6,   name: "Aromatizador Flor de Loto 120ml",              price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 7,   name: "Aromatizador Flores Cítricas 120ml",           price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 8,   name: "Aromatizador Frutas Tropicales 120ml",         price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 9,   name: "Aromatizador Glasé de Naranja 120ml",          price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 10,  name: "Aromatizador Hoja de Higuera 120ml ⭐ PROMO",  price: 2482, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 08/04" },
+                { id: 11,  name: "Aromatizador Limón Manzanilla 120ml",          price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 12,  name: "Aromatizador Maderas de Oriente 120ml",        price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 13,  name: "Aromatizador Marina 120ml",                    price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 14,  name: "Aromatizador Naranja Pimienta 120ml",          price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 15,  name: "Aromatizador Pistacho 120ml",                  price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 16,  name: "Aromatizador Pitanga 120ml",                   price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 17,  name: "Aromatizador Suavechito 120ml",                price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 18,  name: "Aromatizador Suavidad Floral 120ml",           price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 19,  name: "Aromatizador Té Negro y Damasco 120ml ⭐ PROMO",price: 2482, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 08/04" },
+                { id: 20,  name: "Aromatizador Uva 120ml",                       price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 21,  name: "Aromatizador Vainilla y Almendra 120ml ⭐ PROMO",price: 2482,stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 08/04" },
+                { id: 22,  name: "Aromatizador Verbena 120ml",                   price: 2920, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+
+                // LÍNEA HOGAR — Aromatizador de Telas y Ambientes (500 ml, sin gatillo)
+                { id: 23,  name: "Aromatizador Acqua 500ml",                     price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 24,  name: "Aromatizador Ananá y Coco 500ml",              price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 25,  name: "Aromatizador Azahares 500ml",                  price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 26,  name: "Aromatizador Burbujas Jabón 500ml",            price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 27,  name: "Aromatizador Coco y Vainilla 500ml",           price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 28,  name: "Aromatizador Flor de Loto 500ml",              price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 29,  name: "Aromatizador Flores Cítricas 500ml",           price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 30,  name: "Aromatizador Frutas Tropicales 500ml",         price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 31,  name: "Aromatizador Glasé de Naranja 500ml",          price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 32,  name: "Aromatizador Hoja de Higuera 500ml ⭐ PROMO",  price: 6061, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml — PROMO 15% OFF hasta 08/04" },
+                { id: 33,  name: "Aromatizador Limón Manzanilla 500ml",          price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 34,  name: "Aromatizador Maderas de Oriente 500ml",        price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 35,  name: "Aromatizador Marina 500ml",                    price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 36,  name: "Aromatizador Naranja Pimienta 500ml",          price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 37,  name: "Aromatizador Pistacho 500ml",                  price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 38,  name: "Aromatizador Pitanga 500ml",                   price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 39,  name: "Aromatizador Suavechito 500ml",                price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 40,  name: "Aromatizador Suavidad Floral 500ml",           price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 41,  name: "Aromatizador Té Negro y Damasco 500ml ⭐ PROMO",price: 6061, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml — PROMO 15% OFF hasta 08/04" },
+                { id: 42,  name: "Aromatizador Uva 500ml",                       price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+                { id: 43,  name: "Aromatizador Vainilla y Almendra 500ml ⭐ PROMO",price: 6061,stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml — PROMO 15% OFF hasta 08/04" },
+                { id: 44,  name: "Aromatizador Verbena 500ml",                   price: 7130, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" },
+
+                // LÍNEA HOGAR — Aerosol (270ml)
+                { id: 45,  name: "Aerosol Acqua 270ml",                          price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 46,  name: "Aerosol Ananá y Coco 270ml",                   price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 47,  name: "Aerosol Azahares 270ml",                       price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 48,  name: "Aerosol Burbujas de Jabón 270ml",              price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 49,  name: "Aerosol Citronella 270ml",                     price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 50,  name: "Aerosol Coco y Vainilla 270ml 🆕",             price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — NUEVO" },
+                { id: 51,  name: "Aerosol Flor de Loto 270ml",                   price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 52,  name: "Aerosol Flores Cítricas 270ml",                price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 53,  name: "Aerosol Frutas Tropicales 270ml",              price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 54,  name: "Aerosol Glasé de Naranja 270ml",               price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 55,  name: "Aerosol Hoja de Higuera 270ml ⭐ PROMO",       price: 4934, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — PROMO 15% OFF hasta 08/04" },
+                { id: 56,  name: "Aerosol Limón Manzanilla 270ml 🆕",            price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — NUEVO" },
+                { id: 57,  name: "Aerosol Maderas de Oriente 270ml",             price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 58,  name: "Aerosol Marina 270ml",                         price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 59,  name: "Aerosol Naranja Pimienta 270ml",               price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 60,  name: "Aerosol Pistacho 270ml",                       price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 61,  name: "Aerosol Pitanga 270ml",                        price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 62,  name: "Aerosol Suavechito 270ml",                     price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 63,  name: "Aerosol Suavidad Floral 270ml",                price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 64,  name: "Aerosol Té Negro y Damasco 270ml ⭐ PROMO",    price: 4934, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — PROMO 15% OFF hasta 08/04" },
+                { id: 65,  name: "Aerosol Uva 270ml",                            price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+                { id: 66,  name: "Aerosol Vainilla y Almendra 270ml ⭐ PROMO",   price: 4934, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — PROMO 15% OFF hasta 08/04" },
+                { id: 67,  name: "Aerosol Verbena 270ml",                        price: 5805, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" },
+
+                // LÍNEA HOGAR — Difusor Aromático (130ml)
+                { id: 68,  name: "Difusor Aromático Ananá y Coco 130ml",         price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 69,  name: "Difusor Aromático Citronella 130ml",           price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 70,  name: "Difusor Aromático Flor de Loto 130ml",         price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 71,  name: "Difusor Aromático Flores Cítricas 130ml",      price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 72,  name: "Difusor Aromático Frutas Tropicales 130ml",    price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 73,  name: "Difusor Aromático Glasé de Naranja 130ml",     price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 74,  name: "Difusor Aromático Hoja de Higuera 130ml ⭐ PROMO", price: 5011, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04" },
+                { id: 75,  name: "Difusor Aromático Maderas de Oriente 130ml",   price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 76,  name: "Difusor Aromático Mandarina Dulce 130ml",      price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 77,  name: "Difusor Aromático Melón y Mango 130ml",        price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 78,  name: "Difusor Aromático Naranja Pimienta 130ml",     price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 79,  name: "Difusor Aromático Pistacho 130ml",             price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 80,  name: "Difusor Aromático Suavechito 130ml",           price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+                { id: 81,  name: "Difusor Aromático Té Negro y Damasco 130ml ⭐ PROMO", price: 5011, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04" },
+                { id: 82,  name: "Difusor Aromático Vainilla y Almendra 130ml ⭐ PROMO", price: 5011, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04" },
+                { id: 83,  name: "Difusor Aromático Verbena 130ml",              price: 5895, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" },
+
+                // LÍNEA HOGAR — Aceite (12ml)
+                { id: 84,  name: "Aceite Citronella 12ml",                       price: 3495, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" },
+                { id: 85,  name: "Aceite Glasé de Naranja 12ml",                 price: 3495, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" },
+                { id: 86,  name: "Aceite Lavanda y Sándalo 12ml",                price: 3495, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" },
+                { id: 87,  name: "Aceite Maderas de Oriente 12ml",               price: 3495, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" },
+                { id: 88,  name: "Aceite Nag Champa 12ml",                       price: 3495, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" },
+                { id: 89,  name: "Aceite Vainilla y Almendra 12ml ⭐ PROMO",     price: 2971, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml — PROMO 15% OFF hasta 08/04" },
+                { id: 90,  name: "Aceite Verbena 12ml",                          price: 3495, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" },
+
+                // LÍNEA BEBÉ — Aromatizador de Telas y Ambientes (500ml, sin gatillo)
+                { id: 91,  name: "Bebé Aromatizador Arrorró 500ml",              price: 8645, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 92,  name: "Bebé Aromatizador Babies 500ml",               price: 8645, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 93,  name: "Bebé Aromatizador Deditos 500ml",              price: 8645, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 94,  name: "Bebé Aromatizador Lefrance 500ml",             price: 8645, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 95,  name: "Bebé Aromatizador Mimitos 500ml",              price: 8645, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" },
+
+                // LÍNEA BEBÉ — Aerosol (270ml)
+                { id: 96,  name: "Bebé Aerosol Arrorró 270ml 🆕",               price: 5805, stock: 10, image: "", description: "Línea Bebé - Aerosol 270ml — NUEVO" },
+                { id: 97,  name: "Bebé Aerosol Deditos 270ml",                   price: 5805, stock: 10, image: "", description: "Línea Bebé - Aerosol 270ml" },
+                { id: 98,  name: "Bebé Aerosol Lefrance 270ml",                  price: 5805, stock: 10, image: "", description: "Línea Bebé - Aerosol 270ml" },
+
+                // LÍNEA BEBÉ — Agua de Colonia (120ml)
+                { id: 99,  name: "Bebé Agua de Colonia Arrorró 120ml",           price: 5020, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" },
+                { id: 100, name: "Bebé Agua de Colonia Deditos 120ml",           price: 5020, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" },
+                { id: 101, name: "Bebé Agua de Colonia Lefrance 120ml",          price: 5020, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" },
+                { id: 102, name: "Bebé Agua de Colonia Mimitos 120ml",           price: 5020, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" },
+
+                // LÍNEA INFANTIL — Aromatizador de Telas y Ambientes (120ml)
+                { id: 103, name: "Infantil Aromatizador Cositas 120ml",          price: 3315, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 104, name: "Infantil Aromatizador Sueñitos 120ml",         price: 3315, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 105, name: "Infantil Aromatizador Nubecitas 120ml",        price: 3315, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 120ml" },
+
+                // LÍNEA INFANTIL — Aromatizador de Telas y Ambientes (500ml, sin gatillo)
+                { id: 106, name: "Infantil Aromatizador Basquet 500ml",          price: 8645, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 107, name: "Infantil Aromatizador Cositas 500ml",          price: 8645, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 108, name: "Infantil Aromatizador Mujercitas 500ml",       price: 8645, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 109, name: "Infantil Aromatizador Nubecitas 500ml",        price: 8645, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 110, name: "Infantil Aromatizador Sueñitos 500ml",         price: 8645, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" },
+
+                // LÍNEA INFANTIL — Aerosol (270ml)
+                { id: 111, name: "Infantil Aerosol Mujercitas 270ml 🆕",         price: 5805, stock: 10, image: "", description: "Línea Infantil - Aerosol 270ml — NUEVO" },
+                { id: 112, name: "Infantil Aerosol Nubecitas 270ml",             price: 5805, stock: 10, image: "", description: "Línea Infantil - Aerosol 270ml" },
+                { id: 113, name: "Infantil Aerosol Sueñitos 270ml",              price: 5805, stock: 10, image: "", description: "Línea Infantil - Aerosol 270ml" },
+
+                // LÍNEA INFANTIL — Colonia (120ml)
+                { id: 114, name: "Infantil Colonia Basquet 120ml",               price: 5825, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" },
+                { id: 115, name: "Infantil Colonia Mujercitas 120ml",            price: 5825, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" },
+                { id: 116, name: "Infantil Colonia Nubecitas 120ml",             price: 5825, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" },
+                { id: 117, name: "Infantil Colonia Sueñitos 120ml",              price: 5825, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" },
+
+                // LÍNEA CUERPO — Jabón Líquido (300ml)
+                { id: 118, name: "Jabón Líquido Açai 300ml 🆕",                 price: 6995, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" },
+                { id: 119, name: "Jabón Líquido Fresa 300ml 🆕",                price: 6995, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" },
+                { id: 120, name: "Jabón Líquido Lima 300ml 🆕",                 price: 6995, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" },
+                { id: 121, name: "Jabón Líquido Piña 300ml 🆕",                 price: 6995, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" },
+                { id: 122, name: "Jabón Líquido Pomelo 300ml 🆕",               price: 6995, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" },
+
+                // LÍNEA PERFUME — Perfume Personal Femenino (50ml)
+                { id: 123, name: "Perfume 01F_212 50ml",                         price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 124, name: "Perfume 16F_Flow 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 125, name: "Perfume 18F_Hall 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 126, name: "Perfume 22F_LadyMillion 50ml",                 price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 127, name: "Perfume 30F_Honor & Glory 50ml",               price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 128, name: "Perfume 40F_Nina 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 129, name: "Perfume 50F_Yara 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 130, name: "Perfume 54F_Bacarat 50ml",                     price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 131, name: "Perfume 65F_LaVie 50ml",                       price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 132, name: "Perfume 66F_Si 50ml",                          price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 133, name: "Perfume 67F_Olymp 50ml",                       price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 134, name: "Perfume 69F_Good Girl 50ml",                   price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 135, name: "Perfume 72F_Pure 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 136, name: "Perfume 77F_MWay 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 137, name: "Perfume 78F_Cher 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 138, name: "Perfume 79F_Libre 50ml",                       price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 139, name: "Perfume 80F_Idole 50ml",                       price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 140, name: "Perfume 81F_Si Passion 50ml",                  price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 141, name: "Perfume 82F_Olymp Solar 50ml",                 price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 142, name: "Perfume 83F_212 Forever 50ml",                 price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 143, name: "Perfume 85F_Amor Amor 50ml",                   price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 144, name: "Perfume 87F_Scandal 50ml",                     price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 145, name: "Perfume 90F_L-Blue 50ml",                      price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 146, name: "Perfume 92F_Divine 50ml",                      price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+                { id: 147, name: "Perfume 95F_Angel Nova 50ml",                  price: 19630, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" },
+
+                // LÍNEA PERFUME — Perfume Personal Masculino (50ml)
+                { id: 148, name: "Perfume 01M_212 50ml",                         price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 149, name: "Perfume 10M_HBoss 50ml",                       price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 150, name: "Perfume 20M_Oud Glory 50ml",                   price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 151, name: "Perfume 31M_OMillion 50ml",                    price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 152, name: "Perfume 45M_Invict 50ml",                      price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 153, name: "Perfume 48M_Sauvage 50ml",                     price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 154, name: "Perfume 50M_Bboy 50ml",                        price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 155, name: "Perfume 51M_Hero212 50ml",                     price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 156, name: "Perfume 52M_Invict Onyx 50ml",                 price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 157, name: "Perfume 55M_Phantom 50ml",                     price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 158, name: "Perfume 57M_Scandal 50ml",                     price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 159, name: "Perfume 60M_Wanted 50ml",                      price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+                { id: 160, name: "Perfume 62M_Sauvage Elixir 50ml",              price: 19630, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" },
+
+                // LÍNEA PERFUME — Unisex (50ml)
+                { id: 161, name: "Perfume 05_One 50ml",                          price: 19630, stock: 10, image: "", description: "Línea Perfume - Unisex 50ml" },
+                { id: 162, name: "Perfume 12_Erba Pura 50ml",                    price: 19630, stock: 10, image: "", description: "Línea Perfume - Unisex 50ml" },
+
+                // LÍNEA PERFUME — Aromatizador de Telas y Ambientes (120ml)
+                { id: 163, name: "Arom. Perfume 01F_212 120ml",                  price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 164, name: "Arom. Perfume 05_One 120ml",                   price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 165, name: "Arom. Perfume 31M_Million 120ml",              price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 166, name: "Arom. Perfume 45M_Invic 120ml",                price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 167, name: "Arom. Perfume 48M_Sauvage 120ml",              price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 168, name: "Arom. Perfume 60M_Wanted 120ml",               price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 169, name: "Arom. Perfume 65F_LaVie 120ml",                price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 170, name: "Arom. Perfume 67F_Olymp 120ml",                price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 171, name: "Arom. Perfume 78F_Cher 120ml",                 price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+                { id: 172, name: "Arom. Perfume 81F_SiPassion 120ml",            price: 3315, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" },
+
+                // LÍNEA PERFUME — Aromatizador de Telas y Ambientes (500ml, sin gatillo)
+                { id: 173, name: "Arom. Perfume 01F_212 500ml",                  price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 174, name: "Arom. Perfume 05_One 500ml",                   price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 175, name: "Arom. Perfume 31M_Million 500ml",              price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 176, name: "Arom. Perfume 45M_Invic 500ml",                price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 177, name: "Arom. Perfume 48M_Sauvage 500ml",              price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 178, name: "Arom. Perfume 60M_Wanted 500ml",               price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 179, name: "Arom. Perfume 65F_LaVie 500ml",                price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 180, name: "Arom. Perfume 67F_Olymp 500ml",                price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 181, name: "Arom. Perfume 78F_Cher 500ml",                 price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+                { id: 182, name: "Arom. Perfume 81F_SiPassion 500ml",            price: 8645, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" },
+
+                // LÍNEA PERFUME — Aerosol (270ml)
+                { id: 183, name: "Aerosol Perfume 78F_Cher 270ml",               price: 5805, stock: 10, image: "", description: "Línea Perfume - Aerosol 270ml" },
+
+                // LÍNEA AUTO — Difusor para Auto (10ml)
+                { id: 184, name: "Difusor Auto Acqua Car 10ml",                  price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" },
+                { id: 185, name: "Difusor Auto Candy 10ml 🆕",                   price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml — NUEVO" },
+                { id: 186, name: "Difusor Auto Glasé de Naranja 10ml",           price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" },
+                { id: 187, name: "Difusor Auto Maderas de Oriente 10ml",         price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" },
+                { id: 188, name: "Difusor Auto Manzana Verde 10ml",              price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" },
+                { id: 189, name: "Difusor Auto Piña Caribe 10ml",                price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" },
+                { id: 190, name: "Difusor Auto Polo Grey 10ml 🆕",               price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml — NUEVO" },
+                { id: 191, name: "Difusor Auto Lavanda 10ml",                    price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" },
+                { id: 192, name: "Difusor Auto Verbena 10ml",                    price: 5715, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" },
+
+                // LÍNEA AUTO — Aromatizador para Auto (120ml)
+                { id: 193, name: "Aromatizador Auto Acqua Car 120ml",            price: 2895, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml" },
+                { id: 194, name: "Aromatizador Auto Candy 120ml 🆕",             price: 2895, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml — NUEVO" },
+                { id: 195, name: "Aromatizador Auto Manzana Verde 120ml",        price: 2895, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml" },
+                { id: 196, name: "Aromatizador Auto Piña Caribe 120ml",          price: 2895, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml" },
+                { id: 197, name: "Aromatizador Auto Polo Grey 120ml 🆕",         price: 2895, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml — NUEVO" },
+
+                // LÍNEA SALUD
+                { id: 198, name: "Alcohol en Gel Acqua 500ml",                   price: 2560, stock: 10, image: "", description: "Línea Salud - Alcohol en Gel 500ml" },
+
+                // OTROS PRODUCTOS — Home Spray (250ml)
+                { id: 199, name: "Home Spray Gardenia & Flores Blancas 250ml",   price: 6080, stock: 10, image: "", description: "Otros Productos - Home Spray 250ml" },
+                { id: 200, name: "Home Spray Orquídea & Flor de Loto 250ml",     price: 6080, stock: 10, image: "", description: "Otros Productos - Home Spray 250ml" },
+                { id: 201, name: "Home Spray Amapola & Rosas 250ml",             price: 6080, stock: 10, image: "", description: "Otros Productos - Home Spray 250ml" },
+
+                // ACCESORIOS
+                { id: 202, name: "Ambientador Analógico",                        price: 19220, stock: 10, image: "", description: "Accesorios" },
+                { id: 203, name: "Ambientador Analógico 220V",                   price: 23415, stock: 10, image: "", description: "Accesorios" },
+                { id: 204, name: "Cubo Difusor",                                 price: 4560,  stock: 10, image: "", description: "Accesorios" },
+
+                // COMPLEMENTOS
+                { id: 205, name: "Bomba Cremera",                                price: 1185,  stock: 10, image: "", description: "Complementos" },
+                { id: 206, name: "Gatillo",                                      price: 860,   stock: 10, image: "", description: "Complementos" },
+            ]);
+
+            // Estado de Usuarios (Clientes Mayoristas)
+            const [usuarios, setUsuarios] = useState([
+                { id: "u1", nombre: "Distribuidora Mendoza", email: "mayorista@test.com", descuento: { cantidadMinima: 10, porcentaje: 20 } },
+                { id: "u2", nombre: "Revendedor", email: "revendedor@ejemplo.com", descuento: { cantidadMinima: 1, porcentaje: 25 } }
+            ]);
+
+            const [carrito, setCarrito] = useState([]);
+            const [user, setUser] = useState(null);
+            const [notif, setNotif] = useState(null);
+            const [adminAuth, setAdminAuth] = useState(false);
+            const [passInput, setPassInput] = useState("");
+            const [showAdminLogin, setShowAdminLogin] = useState(false);
+
+            const showMsg = (m, t = 'success') => { setNotif({ m, t }); setTimeout(() => setNotif(null), 3000); };
+            const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(p);
+
+            // --- Lógica General de Importación ---
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    const bstr = evt.target.result;
+                    const wb = XLSX.read(bstr, { type: 'binary' });
+                    const wsname = wb.SheetNames[0];
+                    const data = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+                    
+                    if (tabAdmin === 'productos') {
+                        const nuevos = data.map((item, index) => ({
+                            id: Date.now() + index,
+                            name: item.Nombre || "Sin Nombre",
+                            price: Number(item.Precio) || 0,
+                            stock: Number(item.Stock) || 0,
+                            description: item.Descripcion || "",
+                            image: item.Imagen || IMG_DEFAULT
+                        }));
+                        setProductos([...productos, ...nuevos]);
+                        showMsg(`Importados ${nuevos.length} productos`);
+                    } else {
+                        const nuevosUsers = data.map((item, index) => ({
+                            id: "u" + (Date.now() + index),
+                            nombre: item.Nombre || "Usuario",
+                            email: String(item.Email || "").toLowerCase().trim(),
+                            descuento: { 
+                                cantidadMinima: Number(item.Minimo) || 1, 
+                                porcentaje: Number(item.Descuento) || 0 
+                            }
+                        }));
+                        setUsuarios([...usuarios, ...nuevosUsers]);
+                        showMsg(`Importados ${nuevosUsers.length} clientes`);
+                    }
+                    e.target.value = null; // Reset input
+                };
+                reader.readAsBinaryString(file);
+            };
+
+            const handleExport = () => {
+                let dataToExport = [];
+                let fileName = "";
+                
+                if (tabAdmin === 'productos') {
+                    dataToExport = productos.map(p => ({
+                        Nombre: p.name, Precio: p.price, Stock: p.stock, Descripcion: p.description, Imagen: p.image
+                    }));
+                    fileName = "inventario_san_martin.xlsx";
+                } else {
+                    dataToExport = usuarios.map(u => ({
+                        Nombre: u.nombre, Email: u.email, Minimo: u.descuento.cantidadMinima, Descuento: u.descuento.porcentaje
+                    }));
+                    fileName = "clientes_san_martin.xlsx";
+                }
+
+                const ws = XLSX.utils.json_to_sheet(dataToExport);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, tabAdmin === 'productos' ? "Productos" : "Clientes");
+                XLSX.writeFile(wb, fileName);
+            };
+
+            const eliminarItem = (id) => {
+                if (tabAdmin === 'productos') {
+                    setProductos(productos.filter(p => p.id !== id));
+                } else {
+                    setUsuarios(usuarios.filter(u => u.id !== id));
+                }
+                showMsg("Elemento eliminado");
+            };
+
+            // Lógica Carrito
+            const totalItems = carrito.reduce((t, i) => t + i.cantidad, 0);
+            const subtotal = carrito.reduce((t, i) => t + (i.price * i.cantidad), 0);
+            let descVal = (user?.descuento && totalItems >= user.descuento.cantidadMinima) ? subtotal * (user.descuento.porcentaje / 100) : 0;
+            const total = subtotal - descVal;
+
+            const finalizarPedidoTotal = async () => {
+                if(!user) {
+                    showMsg("Debes ingresar como mayorista", "error");
+                    setVista('login');
+                    return;
+                }
+                setCargandoEnvio(true);
+                
+                let msgWhatsApp = `🌿 *PEDIDO SAN MARTIN*\n👤 *Cliente:* ${user.nombre}\n📧 *Email:* ${user.email}\n---\n`;
+                const detalleTexto = carrito.map(i => `• ${i.name} (x${i.cantidad}) - ${formatPrice(i.price * i.cantidad)}`).join('\n');
+                msgWhatsApp += detalleTexto;
+                msgWhatsApp += `\n---\n*TOTAL: ${formatPrice(total)}*`;
+
+                try {
+                    await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify({
+                            cliente: user.nombre,
+                            email: user.email,
+                            pedido: detalleTexto,
+                            total_pedido: formatPrice(total),
+                            _subject: `Nuevo Pedido Mayorista: ${user.nombre}`
+                        })
+                    });
+                } catch (error) { console.error(error); }
+
+                window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msgWhatsApp)}`, '_blank');
+                setCarrito([]);
+                setVista('inicio');
+                setCargandoEnvio(false);
+                showMsg("Pedido enviado");
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    <header className="glass-header border-b sticky top-0 z-50 p-4">
+                        <div className="max-w-6xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setShowAdminLogin(true)}>
+                                <img src={LOGO_URL} className="w-12 h-12 object-contain group-hover:scale-110 transition-transform" />
+                                <h1 className="hidden sm:block font-extrabold text-aroma-600 uppercase tracking-tighter">San Martín <span className="block text-[8px] tracking-[.3em] uppercase opacity-40 text-slate-500 font-normal">Aromas & Fragancias</span></h1>
+                            </div>
+                            <nav className="flex gap-6 items-center">
+                                <button onClick={() => setVista('inicio')} className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-aroma-500 transition-colors">Catálogo</button>
+                                <button onClick={() => setVista('carrito')} className="relative p-2 text-slate-400 hover:text-aroma-500 transition-colors">
+                                    <Icon name="shopping-bag" />
+                                    {carrito.length > 0 && <span className="absolute -top-1 -right-1 bg-aroma-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{carrito.length}</span>}
+                                </button>
+                                {user ? (
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs font-black text-aroma-600">{user.nombre.split(' ')[0]}</span>
+                                        <button onClick={() => {setUser(null); setVista('inicio');}} className="text-slate-300 hover:text-red-400"><Icon name="log-out" className="w-4 h-4"/></button>
+                                    </div>
+                                ) : (
+                                    <button onClick={() => setVista('login')} className="bg-aroma-500 text-white px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-aroma-600 shadow-xl shadow-aroma-100">Ingresar</button>
+                                )}
+                            </nav>
+                        </div>
+                    </header>
+
+                    {notif && (
+                        <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-[100] px-8 py-4 rounded-2xl shadow-2xl text-white text-sm font-bold animate-in flex items-center gap-3 ${notif.t === 'error' ? 'bg-red-500' : 'bg-aroma-600'}`}>
+                            <Icon name={notif.t === 'error' ? 'alert-circle' : 'check-circle'} />
+                            {notif.m}
+                        </div>
+                    )}
+
+                    <main className="flex-grow p-6 max-w-6xl mx-auto w-full">
+                        {vista === 'inicio' && (
+                            <div className="animate-in space-y-12">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                                    {productos.map(p => (
+                                        <div key={p.id} className="product-card bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm transition-all group">
+                                            {p.image && (
+                                                <div className="aspect-square rounded-3xl overflow-hidden mb-6 bg-slate-50 relative">
+                                                    <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                                </div>
+                                            )}
+                                            <h3 className="font-bold text-lg mb-2 text-slate-800">{p.name}</h3>
+                                            <p className="text-xs text-slate-400 line-clamp-2 mb-4 leading-relaxed">{p.description}</p>
+                                            <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-50">
+                                                <span className="text-xl font-black text-aroma-600 italic">{formatPrice(p.price)}</span>
+                                                <button onClick={() => { setCarrito([...carrito, {...p, cantidad: 1}]); showMsg("Añadido"); }} className="bg-aroma-50 text-aroma-500 p-3 rounded-xl hover:bg-aroma-500 hover:text-white transition-all"><Icon name="plus" /></button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {vista === 'admin' && adminAuth && (
+                            <div className="animate-in space-y-8 pb-20">
+                                <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm">
+                                    <div className="flex flex-wrap gap-4 justify-between items-center mb-8">
+                                        <div>
+                                            <h2 className="text-3xl font-black italic font-serif text-slate-800 tracking-tight">Consola Central</h2>
+                                            <div className="flex gap-4 mt-2">
+                                                <button onClick={() => setTabAdmin('productos')} className={`text-[10px] font-black uppercase tracking-widest pb-1 border-b-2 transition-all ${tabAdmin === 'productos' ? 'border-aroma-500 text-aroma-600' : 'border-transparent text-slate-300'}`}>Inventario</button>
+                                                <button onClick={() => setTabAdmin('usuarios')} className={`text-[10px] font-black uppercase tracking-widest pb-1 border-b-2 transition-all ${tabAdmin === 'usuarios' ? 'border-aroma-500 text-aroma-600' : 'border-transparent text-slate-300'}`}>Clientes</button>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            <button onClick={handleExport} className="bg-slate-50 text-slate-500 px-5 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-slate-100">
+                                                <Icon name="download" className="w-4 h-4" /> Exportar {tabAdmin === 'productos' ? 'Stock' : 'Clientes'}
+                                            </button>
+                                            <label className="bg-aroma-600 text-white px-5 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest cursor-pointer shadow-lg shadow-aroma-100 flex items-center gap-2 hover:bg-aroma-700">
+                                                <Icon name="upload" className="w-4 h-4" /> Cargar {tabAdmin === 'productos' ? 'Stock' : 'Clientes'}
+                                                <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} className="hidden" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="overflow-x-auto rounded-3xl border border-slate-50">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-slate-50 text-[10px] uppercase font-black text-slate-400 tracking-widest">
+                                                <tr>
+                                                    <th className="p-4">ID</th>
+                                                    <th className="p-4">Información</th>
+                                                    <th className="p-4">Detalle / Valor</th>
+                                                    <th className="p-4 text-right">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {(tabAdmin === 'productos' ? productos : usuarios).map((item) => (
+                                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="p-4 font-mono text-[10px] text-slate-300">#{item.id}</td>
+                                                        <td className="p-4">
+                                                            <p className="font-bold text-slate-700">{item.name || item.nombre}</p>
+                                                            {item.email && <p className="text-[10px] text-slate-400">{item.email}</p>}
+                                                        </td>
+                                                        <td className="p-4 font-black text-aroma-600">
+                                                            {tabAdmin === 'productos' 
+                                                                ? formatPrice(item.price) 
+                                                                : `${item.descuento.porcentaje}% (Desde ${item.descuento.cantidadMinima} u.)`}
+                                                        </td>
+                                                        <td className="p-4 text-right">
+                                                            <button 
+                                                                onClick={() => eliminarItem(item.id)}
+                                                                className="text-slate-200 hover:text-red-400 transition-colors p-2"
+                                                                title="Eliminar registro"
+                                                            >
+                                                                <Icon name="trash-2" className="w-4 h-4"/>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {(tabAdmin === 'productos' ? productos : usuarios).length === 0 && (
+                                                    <tr>
+                                                        <td colSpan="4" className="p-12 text-center text-slate-300 font-bold uppercase tracking-widest text-xs">
+                                                            No hay registros cargados
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {vista === 'login' && (
+                            <div className="max-w-sm mx-auto mt-20 animate-in">
+                                <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-50 text-center relative">
+                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-white rounded-full p-4 shadow-xl border border-slate-50">
+                                        <img src={LOGO_URL} className="w-full h-full object-contain" />
+                                    </div>
+                                    <h2 className="text-2xl font-black mt-8 mb-2">Portal Mayorista</h2>
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Ingresa tu correo habilitado</p>
+                                    <input type="email" id="emailLogin" className="w-full p-4 bg-slate-50 rounded-2xl font-bold text-center outline-none border-2 border-transparent focus:border-aroma-200 mb-4 transition-all" placeholder="ejemplo@correo.com" />
+                                    <button onClick={() => {
+                                        const email = document.getElementById('emailLogin').value.toLowerCase().trim();
+                                        const found = usuarios.find(u => u.email.toLowerCase() === email);
+                                        if(found) { setUser(found); setVista('inicio'); showMsg(`Hola, ${found.nombre}`); }
+                                        else showMsg("Email no habilitado", "error");
+                                    }} className="w-full bg-aroma-500 text-white py-4 rounded-2xl font-bold uppercase tracking-widest shadow-xl shadow-aroma-100 hover:bg-aroma-600 transition-all">Ingresar</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {vista === 'carrito' && (
+                            <div className="max-w-2xl mx-auto animate-in space-y-8">
+                                <h2 className="text-4xl font-black italic font-serif text-center text-slate-800">Tu Pedido</h2>
+                                <div className="bg-white p-8 rounded-[3rem] shadow-2xl border border-slate-50 relative">
+                                    {carrito.length === 0 ? (
+                                        <div className="text-center py-20 text-slate-300 font-bold uppercase tracking-widest text-[10px]">Vacío</div>
+                                    ) : (
+                                        <div className="space-y-6">
+                                            {carrito.map((item, i) => (
+                                                <div key={i} className="flex justify-between items-center border-b pb-4 border-slate-50">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-14 h-14 rounded-2xl bg-slate-50 overflow-hidden flex items-center justify-center">
+                                                            {item.image ? <img src={item.image} className="w-full h-full object-cover"/> : <Icon name="package" className="w-6 h-6 text-slate-300"/>}
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-bold text-slate-700 text-sm">{item.name}</p>
+                                                            <p className="text-[10px] text-slate-400 font-black">{formatPrice(item.price)} x {item.cantidad}</p>
+                                                        </div>
+                                                    </div>
+                                                    <button onClick={() => setCarrito(carrito.filter((_, idx) => idx !== i))} className="text-slate-200 hover:text-red-400"><Icon name="trash" className="w-4 h-4"/></button>
+                                                </div>
+                                            ))}
+                                            <div className="pt-8 mt-8 border-t-2 border-slate-50 space-y-4">
+                                                <div className="flex justify-between text-xs font-bold text-slate-400"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
+                                                {descVal > 0 && (
+                                                    <div className="flex justify-between text-aroma-600 font-black text-xs bg-aroma-50 p-4 rounded-2xl">
+                                                        <span>Descuento Aplicado ({user.descuento.porcentaje}%)</span>
+                                                        <span>-{formatPrice(descVal)}</span>
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-between items-end pt-4">
+                                                    <span className="text-4xl font-black text-aroma-700 italic font-serif">{formatPrice(total)}</span>
+                                                    <button onClick={finalizarPedidoTotal} disabled={cargandoEnvio} className="bg-green-500 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-[10px] tracking-widest hover:bg-green-600 shadow-xl shadow-green-100">
+                                                        {cargandoEnvio ? 'Enviando...' : 'Confirmar'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    {/* Modal Login Admin */}
+                    {showAdminLogin && !adminAuth && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+                            <div className="bg-white p-10 rounded-[3rem] w-full max-w-xs shadow-2xl animate-in text-center border-b-8 border-aroma-500">
+                                <h2 className="font-black mb-6 uppercase text-[10px] tracking-widest text-slate-400">Administrador</h2>
+                                <input type="password" value={passInput} onChange={e => setPassInput(e.target.value)} className="w-full bg-slate-50 p-4 rounded-2xl text-center mb-6 font-bold outline-none" placeholder="Clave" autoFocus />
+                                <div className="flex gap-3">
+                                    <button onClick={() => setShowAdminLogin(false)} className="flex-1 text-[10px] font-black uppercase tracking-widest text-slate-300">Cerrar</button>
+                                    <button onClick={() => {
+                                        if(passInput === CLAVE_ADMIN) { setAdminAuth(true); setShowAdminLogin(false); setVista('admin'); setPassInput(""); }
+                                        else showMsg("Clave incorrecta", "error");
+                                    }} className="flex-1 bg-aroma-600 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">Entrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
