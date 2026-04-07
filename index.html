@@ -419,7 +419,7 @@
                 let msgWhatsApp = `🌿 *PEDIDO SAN MARTÍN AROMAS*\n👤 *Cliente:* ${nombreCliente}\n---\n`;
                 const detalleTexto = carrito.map(i => `• ${i.name} (x${i.cantidad}) - ${formatPrice(i.precioUsado * i.cantidad)}`).join('\n');
                 msgWhatsApp += detalleTexto;
-                msgWhatsApp += `\n---\n*TOTAL: ${formatPrice(total)}*`;
+                msgWhatsApp += `\n---\n*TOTAL: ${formatPrice(total)}*\n---\n`;
                 msgWhatsApp += `Alias: sanmartinaromas \n---\n Titular: Pacifico Humberto Montaldi`;
 
                 try {
