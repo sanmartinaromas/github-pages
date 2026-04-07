@@ -589,9 +589,9 @@
                                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-white rounded-full p-4 shadow-xl border border-slate-50">
                                         <img src={LOGO_URL} className="w-full h-full object-contain" />
                                     </div>
-                                    <h2 className="text-2xl font-black mt-8 mb-2">Portal Mayorista</h2>
-                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Ingresa tu correo habilitado</p>
-                                    <input type="email" id="emailLogin" className="w-full p-4 bg-slate-50 rounded-2xl font-bold text-center outline-none border-2 border-transparent focus:border-aroma-200 mb-4 transition-all" placeholder="ejemplo@correo.com" />
+                                    <h2 className="text-2xl font-black mt-8 mb-2">Portal Revendedor</h2>
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Ingresa tu D.N.I. sin puntos</p>
+                                    <input type="email" id="emailLogin" className="w-full p-4 bg-slate-50 rounded-2xl font-bold text-center outline-none border-2 border-transparent focus:border-aroma-200 mb-4 transition-all" placeholder="99999999" />
                                     <button onClick={() => {
                                         const email = document.getElementById('emailLogin').value.toLowerCase().trim();
                                         const found = usuarios.find(u => u.email.toLowerCase() === email);
