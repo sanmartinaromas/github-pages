@@ -420,7 +420,7 @@
                 const detalleTexto = carrito.map(i => `• ${i.name} (x${i.cantidad}) - ${formatPrice(i.precioUsado * i.cantidad)}`).join('\n');
                 msgWhatsApp += detalleTexto;
                 msgWhatsApp += `\n---\n*TOTAL: ${formatPrice(total)}*\n---\n`;
-                msgWhatsApp += `Alias: sanmartinaromas \n---\n Titular: Pacifico Humberto Montaldi`;
+                msgWhatsApp += `*Alias*: sanmartinaromas \n---\n *Titular*: Pacifico Humberto Montaldi`;
 
                 try {
                     await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
