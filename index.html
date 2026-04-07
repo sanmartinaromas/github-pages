@@ -332,7 +332,7 @@
             // Estado de Usuarios (Clientes Mayoristas)
             const [usuarios, setUsuarios] = useState([
                 { id: "u1", nombre: "Distribuidora Mendoza", email: "mayorista@test.com", descuento: { cantidadMinima: 0, porcentaje: 0 } },
-                { id: "u2", nombre: "Revendedor", email: "revendedor@ejemplo.com", descuento: { cantidadMinima: 0, porcentaje: 0 } }
+                { id: "u2", nombre: "Revendedor", email: "revendedor@ejemplo.com", descuento: { cantidadMinima: 5, porcentaje: 0 } }
             ]);
 
             const [carrito, setCarrito] = useState([]);
@@ -430,7 +430,7 @@
                 }
                 setCargandoEnvio(true);
                 
-                let msgWhatsApp = `🌿 *PEDIDO SAN MARTIN*\n👤 *Cliente:* ${user.nombre}\n📧 *Email:* ${user.email}\n---\n`;
+                let msgWhatsApp = `🌿 *PEDIDO SAN MARTIN AROMAS*\n👤 *Cliente:* ${user.nombre}\n📧 *Email:* ${user.email}\n---\n`;
                 const detalleTexto = carrito.map(i => `• ${i.name} (x${i.cantidad}) - ${formatPrice(i.price * i.cantidad)}`).join('\n');
                 msgWhatsApp += detalleTexto;
                 msgWhatsApp += `\n---\n*TOTAL: ${formatPrice(total)}*`;
