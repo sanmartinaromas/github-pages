@@ -10,8 +10,6 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- SheetJS para Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -45,9 +43,7 @@
         const { useState, useEffect, useRef } = React;
 
         const LOGO_URL = "https://lh3.googleusercontent.com/d/14d7ZtlSz-x6WwwDtHf6ks_nVCxYstwd1";
-        const CLAVE_ADMIN = "Hola4088";
         const WHATSAPP = "5492634733777";
-        const IMG_DEFAULT = "https://images.unsplash.com/photo-1602928321679-560bb453f190?w=500";
         const FORMSPREE_ID = "xgopdoap"; 
 
         const Icon = ({ name, className = "w-5 h-5" }) => {
@@ -67,13 +63,74 @@
 
         function App() {
             const [vista, setVista] = useState('inicio');
-            const [tabAdmin, setTabAdmin] = useState('productos');
             const [cargandoEnvio, setCargandoEnvio] = useState(false);
+
+            // Mapa de precios públicos por id (del PDF público)
+            const PRECIOS_PUBLICO = {
+                // Aromatizador 120ml
+                1:2920,2:2920,3:2920,4:2920,5:2920,6:2920,7:2920,8:2920,9:2920,10:2482,
+                11:2920,12:2920,13:2920,14:2920,15:2920,16:2920,17:2920,18:2920,19:2482,
+                20:2920,21:2482,22:2920,
+                // Aromatizador 500ml
+                23:7130,24:7130,25:7130,26:7130,27:7130,28:7130,29:7130,30:7130,31:7130,32:6061,
+                33:7130,34:7130,35:7130,36:7130,37:7130,38:7130,39:7130,40:7130,41:6061,
+                42:7130,43:6061,44:7130,
+                // Aerosol 270ml
+                45:5805,46:5805,47:5805,48:5805,49:5805,50:5805,51:5805,52:5805,53:5805,54:5805,
+                55:4934,56:5805,57:5805,58:5805,59:5805,60:5805,61:5805,62:5805,63:5805,64:4934,
+                65:5805,66:4934,67:5805,
+                // Difusor aromático 130ml
+                68:5895,69:5895,70:5895,71:5895,72:5895,73:5895,74:5011,75:5895,76:5895,77:5895,
+                78:5895,79:5895,80:5895,81:5011,82:5011,83:5895,
+                // Aceite 12ml
+                84:3495,85:3495,86:3495,87:3495,88:3495,89:2971,90:3495,
+                // Línea Bebé arom 500ml
+                91:8645,92:8645,93:8645,94:8645,95:8645,
+                // Bebé aerosol 270ml
+                96:5805,97:5805,98:5805,
+                // Bebé agua de colonia 120ml
+                99:5020,100:5020,101:5020,102:5020,
+                // Infantil arom 120ml
+                103:3315,104:3315,105:3315,
+                // Infantil arom 500ml
+                106:8645,107:8645,108:8645,109:8645,110:8645,
+                // Infantil aerosol 270ml
+                111:5805,112:5805,113:5805,
+                // Infantil colonia 120ml
+                114:5825,115:5825,116:5825,117:5825,
+                // Jabón líquido 300ml
+                118:6995,119:6995,120:6995,121:6995,122:6995,
+                // Perfume femenino 50ml
+                123:19630,124:19630,125:19630,126:19630,127:19630,128:19630,129:19630,130:19630,
+                131:19630,132:19630,133:19630,134:19630,135:19630,136:19630,137:19630,138:19630,
+                139:19630,140:19630,141:19630,142:19630,143:19630,144:19630,145:19630,146:19630,147:19630,
+                // Perfume masculino 50ml
+                148:19630,149:19630,150:19630,151:19630,152:19630,153:19630,154:19630,155:19630,
+                156:19630,157:19630,158:19630,159:19630,160:19630,
+                // Perfume unisex 50ml
+                161:19630,162:19630,
+                // Arom. perfume 120ml
+                163:3315,164:3315,165:3315,166:3315,167:3315,168:3315,169:3315,170:3315,171:3315,172:3315,
+                // Arom. perfume 500ml
+                173:8645,174:8645,175:8645,176:8645,177:8645,178:8645,179:8645,180:8645,181:8645,182:8645,
+                // Aerosol perfume
+                183:5805,
+                // Auto difusor
+                184:5715,185:5715,186:5715,187:5715,188:5715,189:5715,190:5715,191:5715,192:5715,
+                // Auto aromatizador
+                193:2895,194:2895,195:2895,196:2895,197:2895,
+                // Salud
+                198:2560,
+                // Home spray
+                199:6080,200:6080,201:6080,
+                // Accesorios
+                202:19220,203:23415,204:4560,
+                // Complementos
+                205:1185,206:860,
+            };
             
-            // Estado de Productos
-            const [productos, setProductos] = useState([
-                // LÍNEA HOGAR — Aromatizador de Telas y Ambientes (120 ml)
-                { id: 1,   name: "Aromatizador Acqua 120ml",                    price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
+            // productos: price = reventa
+            const [productos] = useState([
                 { id: 2,   name: "Aromatizador Ananá y Coco 120ml",              price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
                 { id: 3,   name: "Aromatizador Azahares 120ml",                  price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
                 { id: 4,   name: "Aromatizador Burbujas Jabón 120ml",            price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" },
@@ -329,110 +386,32 @@
                 { id: 206, name: "Gatillo",                                      price: 750,   stock: 10, image: "", description: "Complementos" },
             ]);
 
-            // Estado de Usuarios (Clientes Mayoristas)
-            const [usuarios, setUsuarios] = useState([
-                { id: "u1", nombre: "Distribuidora Mendoza", email: "mayorista@test.com", descuento: { cantidadMinima: 0, porcentaje: 0 } },
-                { id: "u2", nombre: "Revendedor", email: "revendedor@ejemplo.com", descuento: { cantidadMinima: 0, porcentaje: 0 } },
-                { id: "u3", nombre: "revendedora", email: "revendedora", descuento: { cantidadMinima: 0, porcentaje: 0 } }
+            // Estado de Usuarios
+            const [usuarios] = useState([
+                { id: "u1", nombre: "Distribuidora Mendoza", email: "mayorista@test.com", tipo: "revendedor" },
+                { id: "u2", nombre: "Revendedor", email: "revendedor@ejemplo.com", tipo: "revendedor" }
             ]);
 
             const [carrito, setCarrito] = useState([]);
             const [user, setUser] = useState(null);
             const [notif, setNotif] = useState(null);
-            const [adminAuth, setAdminAuth] = useState(false);
-            const [passInput, setPassInput] = useState("");
-            const [showAdminLogin, setShowAdminLogin] = useState(false);
 
             const showMsg = (m, t = 'success') => { setNotif({ m, t }); setTimeout(() => setNotif(null), 3000); };
             const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(p);
 
-            // --- Lógica General de Importación ---
-            const handleFileUpload = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    const bstr = evt.target.result;
-                    const wb = XLSX.read(bstr, { type: 'binary' });
-                    const wsname = wb.SheetNames[0];
-                    const data = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
-                    
-                    if (tabAdmin === 'productos') {
-                        const nuevos = data.map((item, index) => ({
-                            id: Date.now() + index,
-                            name: item.Nombre || "Sin Nombre",
-                            price: Number(item.Precio) || 0,
-                            stock: Number(item.Stock) || 0,
-                            description: item.Descripcion || "",
-                            image: item.Imagen || IMG_DEFAULT
-                        }));
-                        setProductos([...productos, ...nuevos]);
-                        showMsg(`Importados ${nuevos.length} productos`);
-                    } else {
-                        const nuevosUsers = data.map((item, index) => ({
-                            id: "u" + (Date.now() + index),
-                            nombre: item.Nombre || "Usuario",
-                            email: String(item.Email || "").toLowerCase().trim(),
-                            descuento: { 
-                                cantidadMinima: Number(item.Minimo) || 1, 
-                                porcentaje: Number(item.Descuento) || 0 
-                            }
-                        }));
-                        setUsuarios([...usuarios, ...nuevosUsers]);
-                        showMsg(`Importados ${nuevosUsers.length} clientes`);
-                    }
-                    e.target.value = null; // Reset input
-                };
-                reader.readAsBinaryString(file);
-            };
-
-            const handleExport = () => {
-                let dataToExport = [];
-                let fileName = "";
-                
-                if (tabAdmin === 'productos') {
-                    dataToExport = productos.map(p => ({
-                        Nombre: p.name, Precio: p.price, Stock: p.stock, Descripcion: p.description, Imagen: p.image
-                    }));
-                    fileName = "inventario_san_martin.xlsx";
-                } else {
-                    dataToExport = usuarios.map(u => ({
-                        Nombre: u.nombre, Email: u.email, Minimo: u.descuento.cantidadMinima, Descuento: u.descuento.porcentaje
-                    }));
-                    fileName = "clientes_san_martin.xlsx";
-                }
-
-                const ws = XLSX.utils.json_to_sheet(dataToExport);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, tabAdmin === 'productos' ? "Productos" : "Clientes");
-                XLSX.writeFile(wb, fileName);
-            };
-
-            const eliminarItem = (id) => {
-                if (tabAdmin === 'productos') {
-                    setProductos(productos.filter(p => p.id !== id));
-                } else {
-                    setUsuarios(usuarios.filter(u => u.id !== id));
-                }
-                showMsg("Elemento eliminado");
-            };
+            // Precio según rol
+            const getPrecio = (p) => (user?.tipo === 'revendedor') ? p.price : (PRECIOS_PUBLICO[p.id] || p.price);
 
             // Lógica Carrito
-            const totalItems = carrito.reduce((t, i) => t + i.cantidad, 0);
-            const subtotal = carrito.reduce((t, i) => t + (i.price * i.cantidad), 0);
-            let descVal = (user?.descuento && totalItems >= user.descuento.cantidadMinima) ? subtotal * (user.descuento.porcentaje / 100) : 0;
-            const total = subtotal - descVal;
+            const subtotal = carrito.reduce((t, i) => t + (i.precioUsado * i.cantidad), 0);
+            const total = subtotal;
 
             const finalizarPedidoTotal = async () => {
-                if(!user) {
-                    showMsg("Debes ingresar como mayorista", "error");
-                    setVista('login');
-                    return;
-                }
                 setCargandoEnvio(true);
-                
-                let msgWhatsApp = `🌿 *PEDIDO SAN MARTIN AROMAS*\n👤 *Cliente:* ${user.nombre}\n📧 *Email:* ${user.email}\n---\n`;
-                const detalleTexto = carrito.map(i => `• ${i.name} (x${i.cantidad}) - ${formatPrice(i.price * i.cantidad)}`).join('\n');
+                const nombreCliente = user ? user.nombre : "Cliente público";
+                const emailCliente = user ? user.email : "—";
+                let msgWhatsApp = `🌿 *PEDIDO SAN MARTÍN AROMAS*\n👤 *Cliente:* ${nombreCliente}\n---\n`;
+                const detalleTexto = carrito.map(i => `• ${i.name} (x${i.cantidad}) - ${formatPrice(i.precioUsado * i.cantidad)}`).join('\n');
                 msgWhatsApp += detalleTexto;
                 msgWhatsApp += `\n---\n*TOTAL: ${formatPrice(total)}*`;
 
@@ -441,11 +420,11 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({
-                            cliente: user.nombre,
-                            email: user.email,
+                            cliente: nombreCliente,
+                            email: emailCliente,
                             pedido: detalleTexto,
                             total_pedido: formatPrice(total),
-                            _subject: `Nuevo Pedido Mayorista: ${user.nombre}`
+                            _subject: `Nuevo Pedido: ${nombreCliente}`
                         })
                     });
                 } catch (error) { console.error(error); }
@@ -461,9 +440,12 @@
                 <div className="min-h-screen flex flex-col">
                     <header className="glass-header border-b sticky top-0 z-50 p-4">
                         <div className="max-w-6xl mx-auto flex justify-between items-center">
-                            <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setShowAdminLogin(true)}>
-                                <img src={LOGO_URL} className="w-12 h-12 object-contain group-hover:scale-110 transition-transform" />
-                                <h1 className="hidden sm:block font-extrabold text-aroma-600 uppercase tracking-tighter">San Martín <span className="block text-[8px] tracking-[.3em] uppercase opacity-40 text-slate-500 font-normal">Aromas & Fragancias</span></h1>
+                            <div className="flex items-center gap-4 cursor-pointer" onClick={() => setVista('inicio')}>
+                                <img src={LOGO_URL} className="w-12 h-12 object-contain" />
+                                <div>
+                                    <h1 className="hidden sm:block font-extrabold text-aroma-600 uppercase tracking-tighter leading-none">San Martín Aromas</h1>
+                                    <span className="hidden sm:block text-[8px] tracking-[.3em] uppercase opacity-40 text-slate-500 font-normal">Aromas & Fragancias</span>
+                                </div>
                             </div>
                             <nav className="flex gap-6 items-center">
                                 <button onClick={() => setVista('inicio')} className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-aroma-500 transition-colors">Catálogo</button>
@@ -474,7 +456,7 @@
                                 {user ? (
                                     <div className="flex items-center gap-3">
                                         <span className="text-xs font-black text-aroma-600">{user.nombre.split(' ')[0]}</span>
-                                        <button onClick={() => {setUser(null); setVista('inicio');}} className="text-slate-300 hover:text-red-400"><Icon name="log-out" className="w-4 h-4"/></button>
+                                        <button onClick={() => { setUser(null); setVista('inicio'); showMsg("Sesión cerrada"); }} className="text-slate-300 hover:text-red-400"><Icon name="log-out" className="w-4 h-4"/></button>
                                     </div>
                                 ) : (
                                     <button onClick={() => setVista('login')} className="bg-aroma-500 text-white px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-aroma-600 shadow-xl shadow-aroma-100">Ingresar</button>
@@ -493,92 +475,30 @@
                     <main className="flex-grow p-6 max-w-6xl mx-auto w-full">
                         {vista === 'inicio' && (
                             <div className="animate-in space-y-12">
+                                {user?.tipo === 'revendedor' && (
+                                    <div className="bg-aroma-50 border border-aroma-200 rounded-2xl px-6 py-3 text-xs font-bold text-aroma-600 flex items-center gap-2">
+                                        <Icon name="tag" className="w-4 h-4" /> Mostrando precios de reventa
+                                    </div>
+                                )}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                                    {productos.map(p => (
-                                        <div key={p.id} className="product-card bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm transition-all group">
-                                            {p.image && (
-                                                <div className="aspect-square rounded-3xl overflow-hidden mb-6 bg-slate-50 relative">
-                                                    <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                                </div>
-                                            )}
-                                            <h3 className="font-bold text-lg mb-2 text-slate-800">{p.name}</h3>
-                                            <p className="text-xs text-slate-400 line-clamp-2 mb-4 leading-relaxed">{p.description}</p>
-                                            <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-50">
-                                                <span className="text-xl font-black text-aroma-600 italic">{formatPrice(p.price)}</span>
-                                                <button onClick={() => { setCarrito([...carrito, {...p, cantidad: 1}]); showMsg("Añadido"); }} className="bg-aroma-50 text-aroma-500 p-3 rounded-xl hover:bg-aroma-500 hover:text-white transition-all"><Icon name="plus" /></button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {vista === 'admin' && adminAuth && (
-                            <div className="animate-in space-y-8 pb-20">
-                                <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm">
-                                    <div className="flex flex-wrap gap-4 justify-between items-center mb-8">
-                                        <div>
-                                            <h2 className="text-3xl font-black italic font-serif text-slate-800 tracking-tight">Consola Central</h2>
-                                            <div className="flex gap-4 mt-2">
-                                                <button onClick={() => setTabAdmin('productos')} className={`text-[10px] font-black uppercase tracking-widest pb-1 border-b-2 transition-all ${tabAdmin === 'productos' ? 'border-aroma-500 text-aroma-600' : 'border-transparent text-slate-300'}`}>Inventario</button>
-                                                <button onClick={() => setTabAdmin('usuarios')} className={`text-[10px] font-black uppercase tracking-widest pb-1 border-b-2 transition-all ${tabAdmin === 'usuarios' ? 'border-aroma-500 text-aroma-600' : 'border-transparent text-slate-300'}`}>Clientes</button>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            <button onClick={handleExport} className="bg-slate-50 text-slate-500 px-5 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-slate-100">
-                                                <Icon name="download" className="w-4 h-4" /> Exportar {tabAdmin === 'productos' ? 'Stock' : 'Clientes'}
-                                            </button>
-                                            <label className="bg-aroma-600 text-white px-5 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest cursor-pointer shadow-lg shadow-aroma-100 flex items-center gap-2 hover:bg-aroma-700">
-                                                <Icon name="upload" className="w-4 h-4" /> Cargar {tabAdmin === 'productos' ? 'Stock' : 'Clientes'}
-                                                <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} className="hidden" />
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="overflow-x-auto rounded-3xl border border-slate-50">
-                                        <table className="w-full text-left text-sm">
-                                            <thead className="bg-slate-50 text-[10px] uppercase font-black text-slate-400 tracking-widest">
-                                                <tr>
-                                                    <th className="p-4">ID</th>
-                                                    <th className="p-4">Información</th>
-                                                    <th className="p-4">Detalle / Valor</th>
-                                                    <th className="p-4 text-right">Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-slate-50">
-                                                {(tabAdmin === 'productos' ? productos : usuarios).map((item) => (
-                                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                                                        <td className="p-4 font-mono text-[10px] text-slate-300">#{item.id}</td>
-                                                        <td className="p-4">
-                                                            <p className="font-bold text-slate-700">{item.name || item.nombre}</p>
-                                                            {item.email && <p className="text-[10px] text-slate-400">{item.email}</p>}
-                                                        </td>
-                                                        <td className="p-4 font-black text-aroma-600">
-                                                            {tabAdmin === 'productos' 
-                                                                ? formatPrice(item.price) 
-                                                                : `${item.descuento.porcentaje}% (Desde ${item.descuento.cantidadMinima} u.)`}
-                                                        </td>
-                                                        <td className="p-4 text-right">
-                                                            <button 
-                                                                onClick={() => eliminarItem(item.id)}
-                                                                className="text-slate-200 hover:text-red-400 transition-colors p-2"
-                                                                title="Eliminar registro"
-                                                            >
-                                                                <Icon name="trash-2" className="w-4 h-4"/>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                                {(tabAdmin === 'productos' ? productos : usuarios).length === 0 && (
-                                                    <tr>
-                                                        <td colSpan="4" className="p-12 text-center text-slate-300 font-bold uppercase tracking-widest text-xs">
-                                                            No hay registros cargados
-                                                        </td>
-                                                    </tr>
+                                    {productos.map(p => {
+                                        const precio = getPrecio(p);
+                                        return (
+                                            <div key={p.id} className="product-card bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm transition-all group">
+                                                {p.image && (
+                                                    <div className="aspect-square rounded-3xl overflow-hidden mb-6 bg-slate-50 relative">
+                                                        <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                                    </div>
                                                 )}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                <h3 className="font-bold text-lg mb-2 text-slate-800">{p.name}</h3>
+                                                <p className="text-xs text-slate-400 line-clamp-2 mb-4 leading-relaxed">{p.description}</p>
+                                                <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-50">
+                                                    <span className="text-xl font-black text-aroma-600 italic">{formatPrice(precio)}</span>
+                                                    <button onClick={() => { setCarrito([...carrito, {...p, precioUsado: precio, cantidad: 1}]); showMsg("Añadido"); }} className="bg-aroma-50 text-aroma-500 p-3 rounded-xl hover:bg-aroma-500 hover:text-white transition-all"><Icon name="plus" /></button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
@@ -590,14 +510,15 @@
                                         <img src={LOGO_URL} className="w-full h-full object-contain" />
                                     </div>
                                     <h2 className="text-2xl font-black mt-8 mb-2">Portal Revendedor</h2>
-                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Ingresa tu D.N.I. sin puntos</p>
-                                    <input type="email" id="emailLogin" className="w-full p-4 bg-slate-50 rounded-2xl font-bold text-center outline-none border-2 border-transparent focus:border-aroma-200 mb-4 transition-all" placeholder="99999999" />
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Ingresá tu correo habilitado</p>
+                                    <input type="email" id="emailLogin" className="w-full p-4 bg-slate-50 rounded-2xl font-bold text-center outline-none border-2 border-transparent focus:border-aroma-200 mb-4 transition-all" placeholder="ejemplo@correo.com" />
                                     <button onClick={() => {
                                         const email = document.getElementById('emailLogin').value.toLowerCase().trim();
                                         const found = usuarios.find(u => u.email.toLowerCase() === email);
                                         if(found) { setUser(found); setVista('inicio'); showMsg(`Hola, ${found.nombre}`); }
                                         else showMsg("Email no habilitado", "error");
-                                    }} className="w-full bg-aroma-500 text-white py-4 rounded-2xl font-bold uppercase tracking-widest shadow-xl shadow-aroma-100 hover:bg-aroma-600 transition-all">Ingresar</button>
+                                    }} className="w-full bg-aroma-500 text-white py-4 rounded-2xl font-bold uppercase tracking-widest shadow-xl shadow-aroma-100 hover:bg-aroma-600 transition-all mb-3">Ingresar como Revendedor</button>
+                                    <button onClick={() => setVista('inicio')} className="text-xs text-slate-400 hover:text-aroma-500 font-bold uppercase tracking-widest">Volver al catálogo público</button>
                                 </div>
                             </div>
                         )}
@@ -618,20 +539,13 @@
                                                         </div>
                                                         <div>
                                                             <p className="font-bold text-slate-700 text-sm">{item.name}</p>
-                                                            <p className="text-[10px] text-slate-400 font-black">{formatPrice(item.price)} x {item.cantidad}</p>
+                                                            <p className="text-[10px] text-slate-400 font-black">{formatPrice(item.precioUsado)} x {item.cantidad}</p>
                                                         </div>
                                                     </div>
                                                     <button onClick={() => setCarrito(carrito.filter((_, idx) => idx !== i))} className="text-slate-200 hover:text-red-400"><Icon name="trash" className="w-4 h-4"/></button>
                                                 </div>
                                             ))}
                                             <div className="pt-8 mt-8 border-t-2 border-slate-50 space-y-4">
-                                                <div className="flex justify-between text-xs font-bold text-slate-400"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
-                                                {descVal > 0 && (
-                                                    <div className="flex justify-between text-aroma-600 font-black text-xs bg-aroma-50 p-4 rounded-2xl">
-                                                        <span>Descuento Aplicado ({user.descuento.porcentaje}%)</span>
-                                                        <span>-{formatPrice(descVal)}</span>
-                                                    </div>
-                                                )}
                                                 <div className="flex justify-between items-end pt-4">
                                                     <span className="text-4xl font-black text-aroma-700 italic font-serif">{formatPrice(total)}</span>
                                                     <button onClick={finalizarPedidoTotal} disabled={cargandoEnvio} className="bg-green-500 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-[10px] tracking-widest hover:bg-green-600 shadow-xl shadow-green-100">
@@ -645,23 +559,6 @@
                             </div>
                         )}
                     </main>
-
-                    {/* Modal Login Admin */}
-                    {showAdminLogin && !adminAuth && (
-                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-                            <div className="bg-white p-10 rounded-[3rem] w-full max-w-xs shadow-2xl animate-in text-center border-b-8 border-aroma-500">
-                                <h2 className="font-black mb-6 uppercase text-[10px] tracking-widest text-slate-400">Administrador</h2>
-                                <input type="password" value={passInput} onChange={e => setPassInput(e.target.value)} className="w-full bg-slate-50 p-4 rounded-2xl text-center mb-6 font-bold outline-none" placeholder="Clave" autoFocus />
-                                <div className="flex gap-3">
-                                    <button onClick={() => setShowAdminLogin(false)} className="flex-1 text-[10px] font-black uppercase tracking-widest text-slate-300">Cerrar</button>
-                                    <button onClick={() => {
-                                        if(passInput === CLAVE_ADMIN) { setAdminAuth(true); setShowAdminLogin(false); setVista('admin'); setPassInput(""); }
-                                        else showMsg("Clave incorrecta", "error");
-                                    }} className="flex-1 bg-aroma-600 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">Entrar</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             );
         }
