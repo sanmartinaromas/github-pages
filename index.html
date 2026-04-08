@@ -131,259 +131,237 @@
             
             // productos: price = reventa, grupo = sección del PDF
             const [productos] = useState([
-                { id: 2,   name: "Aromatizador Ananá y Coco 120ml",              price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar" },
-                { id: 3,   name: "Aromatizador Azahares 120ml",                  price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 4,   name: "Aromatizador Burbujas Jabón 120ml",            price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 5,   name: "Aromatizador Coco y Vainilla 120ml",           price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 6,   name: "Aromatizador Flor de Loto 120ml",              price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 7,   name: "Aromatizador Flores Cítricas 120ml",           price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 8,   name: "Aromatizador Frutas Tropicales 120ml",         price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 9,   name: "Aromatizador Glasé de Naranja 120ml",          price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 10,  name: "Aromatizador Hoja de Higuera 120ml ⭐ PROMO",  price: 1908, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 11,  name: "Aromatizador Limón Manzanilla 120ml",          price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 12,  name: "Aromatizador Maderas de Oriente 120ml",        price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 13,  name: "Aromatizador Marina 120ml",                    price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 14,  name: "Aromatizador Naranja Pimienta 120ml",          price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 15,  name: "Aromatizador Pistacho 120ml",                  price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 16,  name: "Aromatizador Pitanga 120ml",                   price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 17,  name: "Aromatizador Suavechito 120ml",                price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 18,  name: "Aromatizador Suavidad Floral 120ml",           price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 19,  name: "Aromatizador Té Negro y Damasco 120ml ⭐ PROMO",price: 1908, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 20,  name: "Aromatizador Uva 120ml",                       price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
-                { id: 21,  name: "Aromatizador Vainilla y Almendra 120ml ⭐ PROMO",price: 1908,stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 22,  name: "Aromatizador Verbena 120ml",                   price: 2245, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Hogar" },
+                { id: 2,   name: "Aromatizador Ananá y Coco 120ml",              price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 3,   name: "Aromatizador Azahares 120ml",                  price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 4,   name: "Aromatizador Burbujas Jabón 120ml",            price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 5,   name: "Aromatizador Coco y Vainilla 120ml",           price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 6,   name: "Aromatizador Flor de Loto 120ml",              price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 7,   name: "Aromatizador Flores Cítricas 120ml",           price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 8,   name: "Aromatizador Frutas Tropicales 120ml",         price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 9,   name: "Aromatizador Glasé de Naranja 120ml",          price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 10,  name: "Aromatizador Hoja de Higuera 120ml ⭐ PROMO",  price: 1908, stock: 10, image: "", description: "Aromatizador 120ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 11,  name: "Aromatizador Limón Manzanilla 120ml",          price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 12,  name: "Aromatizador Maderas de Oriente 120ml",        price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 13,  name: "Aromatizador Marina 120ml",                    price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 14,  name: "Aromatizador Naranja Pimienta 120ml",          price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 15,  name: "Aromatizador Pistacho 120ml",                  price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 16,  name: "Aromatizador Pitanga 120ml",                   price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 17,  name: "Aromatizador Suavechito 120ml",                price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 18,  name: "Aromatizador Suavidad Floral 120ml",           price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 19,  name: "Aromatizador Té Negro y Damasco 120ml ⭐ PROMO",price: 1908, stock: 10, image: "", description: "Aromatizador 120ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 20,  name: "Aromatizador Uva 120ml",                       price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 21,  name: "Aromatizador Vainilla y Almendra 120ml ⭐ PROMO",price: 1908,stock: 10, image: "", description: "Aromatizador 120ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 22,  name: "Aromatizador Verbena 120ml",                   price: 2245, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
 
-                // LÍNEA HOGAR — Aromatizador de Telas y Ambientes (500 ml, sin gatillo)
-                { id: 23,  name: "Aromatizador Acqua 500ml",                     price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 24,  name: "Aromatizador Ananá y Coco 500ml",              price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 25,  name: "Aromatizador Azahares 500ml",                  price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 26,  name: "Aromatizador Burbujas Jabón 500ml",            price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 27,  name: "Aromatizador Coco y Vainilla 500ml",           price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 28,  name: "Aromatizador Flor de Loto 500ml",              price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 29,  name: "Aromatizador Flores Cítricas 500ml",           price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 30,  name: "Aromatizador Frutas Tropicales 500ml",         price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 31,  name: "Aromatizador Glasé de Naranja 500ml",          price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 32,  name: "Aromatizador Hoja de Higuera 500ml ⭐ PROMO",  price: 4662, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 33,  name: "Aromatizador Limón Manzanilla 500ml",          price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 34,  name: "Aromatizador Maderas de Oriente 500ml",        price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 35,  name: "Aromatizador Marina 500ml",                    price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 36,  name: "Aromatizador Naranja Pimienta 500ml",          price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 37,  name: "Aromatizador Pistacho 500ml",                  price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 38,  name: "Aromatizador Pitanga 500ml",                   price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 39,  name: "Aromatizador Suavechito 500ml",                price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 40,  name: "Aromatizador Suavidad Floral 500ml",           price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 41,  name: "Aromatizador Té Negro y Damasco 500ml ⭐ PROMO",price: 4662, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 42,  name: "Aromatizador Uva 500ml",                       price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
-                { id: 43,  name: "Aromatizador Vainilla y Almendra 500ml ⭐ PROMO",price: 4662,stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 44,  name: "Aromatizador Verbena 500ml",                   price: 5485, stock: 10, image: "", description: "Línea Hogar - Aromatizador de Telas y Ambientes 500ml (sin gatillo)" , grupo: "Línea Hogar" },
+                { id: 23,  name: "Aromatizador Acqua 500ml",                     price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 24,  name: "Aromatizador Ananá y Coco 500ml",              price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 25,  name: "Aromatizador Azahares 500ml",                  price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 26,  name: "Aromatizador Burbujas Jabón 500ml",            price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 27,  name: "Aromatizador Coco y Vainilla 500ml",           price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 28,  name: "Aromatizador Flor de Loto 500ml",              price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 29,  name: "Aromatizador Flores Cítricas 500ml",           price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 30,  name: "Aromatizador Frutas Tropicales 500ml",         price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 31,  name: "Aromatizador Glasé de Naranja 500ml",          price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 32,  name: "Aromatizador Hoja de Higuera 500ml ⭐ PROMO",  price: 4662, stock: 10, image: "", description: "Aromatizador 500ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 33,  name: "Aromatizador Limón Manzanilla 500ml",          price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 34,  name: "Aromatizador Maderas de Oriente 500ml",        price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 35,  name: "Aromatizador Marina 500ml",                    price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 36,  name: "Aromatizador Naranja Pimienta 500ml",          price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 37,  name: "Aromatizador Pistacho 500ml",                  price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 38,  name: "Aromatizador Pitanga 500ml",                   price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 39,  name: "Aromatizador Suavechito 500ml",                price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 40,  name: "Aromatizador Suavidad Floral 500ml",           price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 41,  name: "Aromatizador Té Negro y Damasco 500ml ⭐ PROMO",price: 4662, stock: 10, image: "", description: "Aromatizador 500ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 42,  name: "Aromatizador Uva 500ml",                       price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 43,  name: "Aromatizador Vainilla y Almendra 500ml ⭐ PROMO",price: 4662,stock: 10, image: "", description: "Aromatizador 500ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 44,  name: "Aromatizador Verbena 500ml",                   price: 5485, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
 
-                // LÍNEA HOGAR — Aerosol (270ml)
-                { id: 45,  name: "Aerosol Acqua 270ml",                          price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 46,  name: "Aerosol Ananá y Coco 270ml",                   price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 47,  name: "Aerosol Azahares 270ml",                       price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 48,  name: "Aerosol Burbujas de Jabón 270ml",              price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 49,  name: "Aerosol Citronella 270ml",                     price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 50,  name: "Aerosol Coco y Vainilla 270ml 🆕",             price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — NUEVO" , grupo: "Línea Hogar" },
-                { id: 51,  name: "Aerosol Flor de Loto 270ml",                   price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 52,  name: "Aerosol Flores Cítricas 270ml",                price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 53,  name: "Aerosol Frutas Tropicales 270ml",              price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 54,  name: "Aerosol Glasé de Naranja 270ml",               price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 55,  name: "Aerosol Hoja de Higuera 270ml ⭐ PROMO",       price: 3795, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 56,  name: "Aerosol Limón Manzanilla 270ml 🆕",            price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — NUEVO" , grupo: "Línea Hogar" },
-                { id: 57,  name: "Aerosol Maderas de Oriente 270ml",             price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 58,  name: "Aerosol Marina 270ml",                         price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 59,  name: "Aerosol Naranja Pimienta 270ml",               price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 60,  name: "Aerosol Pistacho 270ml",                       price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 61,  name: "Aerosol Pitanga 270ml",                        price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 62,  name: "Aerosol Suavechito 270ml",                     price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 63,  name: "Aerosol Suavidad Floral 270ml",                price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 64,  name: "Aerosol Té Negro y Damasco 270ml ⭐ PROMO",    price: 3795, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 65,  name: "Aerosol Uva 270ml",                            price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
-                { id: 66,  name: "Aerosol Vainilla y Almendra 270ml ⭐ PROMO",   price: 3795, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 67,  name: "Aerosol Verbena 270ml",                        price: 4465, stock: 10, image: "", description: "Línea Hogar - Aerosol 270ml" , grupo: "Línea Hogar" },
+                { id: 45,  name: "Aerosol Acqua 270ml",                          price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 46,  name: "Aerosol Ananá y Coco 270ml",                   price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 47,  name: "Aerosol Azahares 270ml",                       price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 48,  name: "Aerosol Burbujas de Jabón 270ml",              price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 49,  name: "Aerosol Citronella 270ml",                     price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 50,  name: "Aerosol Coco y Vainilla 270ml 🆕",             price: 4465, stock: 10, image: "", description: "Aerosol 270ml — NUEVO", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 51,  name: "Aerosol Flor de Loto 270ml",                   price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 52,  name: "Aerosol Flores Cítricas 270ml",                price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 53,  name: "Aerosol Frutas Tropicales 270ml",              price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 54,  name: "Aerosol Glasé de Naranja 270ml",               price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 55,  name: "Aerosol Hoja de Higuera 270ml ⭐ PROMO",       price: 3795, stock: 10, image: "", description: "Aerosol 270ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 56,  name: "Aerosol Limón Manzanilla 270ml 🆕",            price: 4465, stock: 10, image: "", description: "Aerosol 270ml — NUEVO", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 57,  name: "Aerosol Maderas de Oriente 270ml",             price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 58,  name: "Aerosol Marina 270ml",                         price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 59,  name: "Aerosol Naranja Pimienta 270ml",               price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 60,  name: "Aerosol Pistacho 270ml",                       price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 61,  name: "Aerosol Pitanga 270ml",                        price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 62,  name: "Aerosol Suavechito 270ml",                     price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 63,  name: "Aerosol Suavidad Floral 270ml",                price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 64,  name: "Aerosol Té Negro y Damasco 270ml ⭐ PROMO",    price: 3795, stock: 10, image: "", description: "Aerosol 270ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 65,  name: "Aerosol Uva 270ml",                            price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 66,  name: "Aerosol Vainilla y Almendra 270ml ⭐ PROMO",   price: 3795, stock: 10, image: "", description: "Aerosol 270ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 67,  name: "Aerosol Verbena 270ml",                        price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
 
-                // LÍNEA HOGAR — Difusor Aromático (130ml)
-                { id: 68,  name: "Difusor Aromático Ananá y Coco 130ml",         price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 69,  name: "Difusor Aromático Citronella 130ml",           price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 70,  name: "Difusor Aromático Flor de Loto 130ml",         price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 71,  name: "Difusor Aromático Flores Cítricas 130ml",      price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 72,  name: "Difusor Aromático Frutas Tropicales 130ml",    price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 73,  name: "Difusor Aromático Glasé de Naranja 130ml",     price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 74,  name: "Difusor Aromático Hoja de Higuera 130ml ⭐ PROMO", price: 3855, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 75,  name: "Difusor Aromático Maderas de Oriente 130ml",   price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 76,  name: "Difusor Aromático Mandarina Dulce 130ml",      price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 77,  name: "Difusor Aromático Melón y Mango 130ml",        price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 78,  name: "Difusor Aromático Naranja Pimienta 130ml",     price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 79,  name: "Difusor Aromático Pistacho 130ml",             price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 80,  name: "Difusor Aromático Suavechito 130ml",           price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
-                { id: 81,  name: "Difusor Aromático Té Negro y Damasco 130ml ⭐ PROMO", price: 3855, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 82,  name: "Difusor Aromático Vainilla y Almendra 130ml ⭐ PROMO", price: 3855, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 83,  name: "Difusor Aromático Verbena 130ml",              price: 4535, stock: 10, image: "", description: "Línea Hogar - Difusor Aromático 130ml" , grupo: "Línea Hogar" },
+                { id: 68,  name: "Difusor Aromático Ananá y Coco 130ml",         price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 69,  name: "Difusor Aromático Citronella 130ml",           price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 70,  name: "Difusor Aromático Flor de Loto 130ml",         price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 71,  name: "Difusor Aromático Flores Cítricas 130ml",      price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 72,  name: "Difusor Aromático Frutas Tropicales 130ml",    price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 73,  name: "Difusor Aromático Glasé de Naranja 130ml",     price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 74,  name: "Difusor Aromático Hoja de Higuera 130ml ⭐ PROMO", price: 3855, stock: 10, image: "", description: "Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 75,  name: "Difusor Aromático Maderas de Oriente 130ml",   price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 76,  name: "Difusor Aromático Mandarina Dulce 130ml",      price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 77,  name: "Difusor Aromático Melón y Mango 130ml",        price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 78,  name: "Difusor Aromático Naranja Pimienta 130ml",     price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 79,  name: "Difusor Aromático Pistacho 130ml",             price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 80,  name: "Difusor Aromático Suavechito 130ml",           price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 81,  name: "Difusor Aromático Té Negro y Damasco 130ml ⭐ PROMO", price: 3855, stock: 10, image: "", description: "Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 82,  name: "Difusor Aromático Vainilla y Almendra 130ml ⭐ PROMO", price: 3855, stock: 10, image: "", description: "Difusor Aromático 130ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 83,  name: "Difusor Aromático Verbena 130ml",              price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
 
-                // LÍNEA HOGAR — Aceite (12ml)
-                { id: 84,  name: "Aceite Citronella 12ml",                       price: 2690, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" , grupo: "Línea Hogar" },
-                { id: 85,  name: "Aceite Glasé de Naranja 12ml",                 price: 2690, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" , grupo: "Línea Hogar" },
-                { id: 86,  name: "Aceite Lavanda y Sándalo 12ml",                price: 2690, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" , grupo: "Línea Hogar" },
-                { id: 87,  name: "Aceite Maderas de Oriente 12ml",               price: 2690, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" , grupo: "Línea Hogar" },
-                { id: 88,  name: "Aceite Nag Champa 12ml",                       price: 2690, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" , grupo: "Línea Hogar" },
-                { id: 89,  name: "Aceite Vainilla y Almendra 12ml ⭐ PROMO",     price: 2287, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml — PROMO 15% OFF hasta 08/04" , grupo: "Línea Hogar" },
-                { id: 90,  name: "Aceite Verbena 12ml",                          price: 2690, stock: 10, image: "", description: "Línea Hogar - Aceite 12ml" , grupo: "Línea Hogar" },
+                { id: 84,  name: "Aceite Citronella 12ml",                       price: 2690, stock: 10, image: "", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 85,  name: "Aceite Glasé de Naranja 12ml",                 price: 2690, stock: 10, image: "", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 86,  name: "Aceite Lavanda y Sándalo 12ml",                price: 2690, stock: 10, image: "", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 87,  name: "Aceite Maderas de Oriente 12ml",               price: 2690, stock: 10, image: "", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 88,  name: "Aceite Nag Champa 12ml",                       price: 2690, stock: 10, image: "", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 89,  name: "Aceite Vainilla y Almendra 12ml ⭐ PROMO",     price: 2287, stock: 10, image: "", description: "Aceite 12ml — PROMO 15% OFF hasta 08/04", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 90,  name: "Aceite Verbena 12ml",                          price: 2690, stock: 10, image: "", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
 
                 // LÍNEA BEBÉ — Aromatizador de Telas y Ambientes (500ml, sin gatillo)
-                { id: 91,  name: "Bebé Aromatizador Arrorró 500ml",              price: 6650, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Bebé" },
-                { id: 92,  name: "Bebé Aromatizador Babies 500ml",               price: 6650, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Bebé" },
-                { id: 93,  name: "Bebé Aromatizador Deditos 500ml",              price: 6650, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Bebé" },
-                { id: 94,  name: "Bebé Aromatizador Lefrance 500ml",             price: 6650, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Bebé" },
-                { id: 95,  name: "Bebé Aromatizador Mimitos 500ml",              price: 6650, stock: 10, image: "", description: "Línea Bebé - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Bebé" },
+                { id: 91,  name: "Bebé Aromatizador Arrorró 500ml",              price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 92,  name: "Bebé Aromatizador Babies 500ml",               price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 93,  name: "Bebé Aromatizador Deditos 500ml",              price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 94,  name: "Bebé Aromatizador Lefrance 500ml",             price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 95,  name: "Bebé Aromatizador Mimitos 500ml",              price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
 
-                // LÍNEA BEBÉ — Aerosol (270ml)
-                { id: 96,  name: "Bebé Aerosol Arrorró 270ml 🆕",               price: 4465, stock: 10, image: "", description: "Línea Bebé - Aerosol 270ml — NUEVO" , grupo: "Línea Bebé" },
-                { id: 97,  name: "Bebé Aerosol Deditos 270ml",                   price: 4465, stock: 10, image: "", description: "Línea Bebé - Aerosol 270ml" , grupo: "Línea Bebé" },
-                { id: 98,  name: "Bebé Aerosol Lefrance 270ml",                  price: 4465, stock: 10, image: "", description: "Línea Bebé - Aerosol 270ml" , grupo: "Línea Bebé" },
+                { id: 96,  name: "Bebé Aerosol Arrorró 270ml 🆕",               price: 4465, stock: 10, image: "", description: "Aerosol 270ml — NUEVO", grupo: "Línea Bebé", subgrupo: "Aerosol 270ml" },
+                { id: 97,  name: "Bebé Aerosol Deditos 270ml",                   price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Bebé", subgrupo: "Aerosol 270ml" },
+                { id: 98,  name: "Bebé Aerosol Lefrance 270ml",                  price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Bebé", subgrupo: "Aerosol 270ml" },
 
-                // LÍNEA BEBÉ — Agua de Colonia (120ml)
-                { id: 99,  name: "Bebé Agua de Colonia Arrorró 120ml",           price: 3860, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" , grupo: "Línea Bebé" },
-                { id: 100, name: "Bebé Agua de Colonia Deditos 120ml",           price: 3860, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" , grupo: "Línea Bebé" },
-                { id: 101, name: "Bebé Agua de Colonia Lefrance 120ml",          price: 3860, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" , grupo: "Línea Bebé" },
-                { id: 102, name: "Bebé Agua de Colonia Mimitos 120ml",           price: 3860, stock: 10, image: "", description: "Línea Bebé - Agua de Colonia 120ml" , grupo: "Línea Bebé" },
+                { id: 99,  name: "Bebé Agua de Colonia Arrorró 120ml",           price: 3860, stock: 10, image: "", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
+                { id: 100, name: "Bebé Agua de Colonia Deditos 120ml",           price: 3860, stock: 10, image: "", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
+                { id: 101, name: "Bebé Agua de Colonia Lefrance 120ml",          price: 3860, stock: 10, image: "", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
+                { id: 102, name: "Bebé Agua de Colonia Mimitos 120ml",           price: 3860, stock: 10, image: "", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
 
                 // LÍNEA INFANTIL — Aromatizador de Telas y Ambientes (120ml)
-                { id: 103, name: "Infantil Aromatizador Cositas 120ml",          price: 2550, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Infantil" },
-                { id: 104, name: "Infantil Aromatizador Sueñitos 120ml",         price: 2550, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Infantil" },
-                { id: 105, name: "Infantil Aromatizador Nubecitas 120ml",        price: 2550, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Infantil" },
+                { id: 103, name: "Infantil Aromatizador Cositas 120ml",          price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 120ml" },
+                { id: 104, name: "Infantil Aromatizador Sueñitos 120ml",         price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 120ml" },
+                { id: 105, name: "Infantil Aromatizador Nubecitas 120ml",        price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 120ml" },
 
-                // LÍNEA INFANTIL — Aromatizador de Telas y Ambientes (500ml, sin gatillo)
-                { id: 106, name: "Infantil Aromatizador Basquet 500ml",          price: 6650, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Infantil" },
-                { id: 107, name: "Infantil Aromatizador Cositas 500ml",          price: 6650, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Infantil" },
-                { id: 108, name: "Infantil Aromatizador Mujercitas 500ml",       price: 6650, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Infantil" },
-                { id: 109, name: "Infantil Aromatizador Nubecitas 500ml",        price: 6650, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Infantil" },
-                { id: 110, name: "Infantil Aromatizador Sueñitos 500ml",         price: 6650, stock: 10, image: "", description: "Línea Infantil - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Infantil" },
+                { id: 106, name: "Infantil Aromatizador Basquet 500ml",          price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 107, name: "Infantil Aromatizador Cositas 500ml",          price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 108, name: "Infantil Aromatizador Mujercitas 500ml",       price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 109, name: "Infantil Aromatizador Nubecitas 500ml",        price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 110, name: "Infantil Aromatizador Sueñitos 500ml",         price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
 
-                // LÍNEA INFANTIL — Aerosol (270ml)
-                { id: 111, name: "Infantil Aerosol Mujercitas 270ml 🆕",         price: 4465, stock: 10, image: "", description: "Línea Infantil - Aerosol 270ml — NUEVO" , grupo: "Línea Infantil" },
-                { id: 112, name: "Infantil Aerosol Nubecitas 270ml",             price: 4465, stock: 10, image: "", description: "Línea Infantil - Aerosol 270ml" , grupo: "Línea Infantil" },
-                { id: 113, name: "Infantil Aerosol Sueñitos 270ml",              price: 4465, stock: 10, image: "", description: "Línea Infantil - Aerosol 270ml" , grupo: "Línea Infantil" },
+                { id: 111, name: "Infantil Aerosol Mujercitas 270ml 🆕",         price: 4465, stock: 10, image: "", description: "Aerosol 270ml — NUEVO", grupo: "Línea Infantil", subgrupo: "Aerosol 270ml" },
+                { id: 112, name: "Infantil Aerosol Nubecitas 270ml",             price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Infantil", subgrupo: "Aerosol 270ml" },
+                { id: 113, name: "Infantil Aerosol Sueñitos 270ml",              price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Infantil", subgrupo: "Aerosol 270ml" },
 
-                // LÍNEA INFANTIL — Colonia (120ml)
-                { id: 114, name: "Infantil Colonia Basquet 120ml",               price: 4480, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" , grupo: "Línea Infantil" },
-                { id: 115, name: "Infantil Colonia Mujercitas 120ml",            price: 4480, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" , grupo: "Línea Infantil" },
-                { id: 116, name: "Infantil Colonia Nubecitas 120ml",             price: 4480, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" , grupo: "Línea Infantil" },
-                { id: 117, name: "Infantil Colonia Sueñitos 120ml",              price: 4480, stock: 10, image: "", description: "Línea Infantil - Colonia 120ml" , grupo: "Línea Infantil" },
-
-                // LÍNEA CUERPO — Jabón Líquido (300ml)
-                { id: 118, name: "Jabón Líquido Açai 300ml 🆕",                 price: 5380, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" , grupo: "Línea Cuerpo" },
-                { id: 119, name: "Jabón Líquido Fresa 300ml 🆕",                price: 5380, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" , grupo: "Línea Cuerpo" },
-                { id: 120, name: "Jabón Líquido Lima 300ml 🆕",                 price: 5380, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" , grupo: "Línea Cuerpo" },
-                { id: 121, name: "Jabón Líquido Piña 300ml 🆕",                 price: 5380, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" , grupo: "Línea Cuerpo" },
-                { id: 122, name: "Jabón Líquido Pomelo 300ml 🆕",               price: 5380, stock: 10, image: "", description: "Línea Cuerpo - Jabón Líquido 300ml — NUEVO" , grupo: "Línea Cuerpo" },
+                { id: 114, name: "Infantil Colonia Basquet 120ml",               price: 4480, stock: 10, image: "", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 115, name: "Infantil Colonia Mujercitas 120ml",            price: 4480, stock: 10, image: "", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 116, name: "Infantil Colonia Nubecitas 120ml",             price: 4480, stock: 10, image: "", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 117, name: "Infantil Colonia Sueñitos 120ml",              price: 4480, stock: 10, image: "", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 118, name: "Jabón Líquido Açai 300ml 🆕",                 price: 5380, stock: 10, image: "", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 119, name: "Jabón Líquido Fresa 300ml 🆕",                price: 5380, stock: 10, image: "", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 120, name: "Jabón Líquido Lima 300ml 🆕",                 price: 5380, stock: 10, image: "", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 121, name: "Jabón Líquido Piña 300ml 🆕",                 price: 5380, stock: 10, image: "", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 122, name: "Jabón Líquido Pomelo 300ml 🆕",               price: 5380, stock: 10, image: "", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
 
                 // LÍNEA PERFUME — Perfume Personal Femenino (50ml)
-                { id: 123, name: "Perfume 01F_212 50ml",                         price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 124, name: "Perfume 16F_Flow 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 125, name: "Perfume 18F_Hall 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 126, name: "Perfume 22F_LadyMillion 50ml",                 price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 127, name: "Perfume 30F_Honor & Glory 50ml",               price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 128, name: "Perfume 40F_Nina 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 129, name: "Perfume 50F_Yara 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 130, name: "Perfume 54F_Bacarat 50ml",                     price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 131, name: "Perfume 65F_LaVie 50ml",                       price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 132, name: "Perfume 66F_Si 50ml",                          price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 133, name: "Perfume 67F_Olymp 50ml",                       price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 134, name: "Perfume 69F_Good Girl 50ml",                   price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 135, name: "Perfume 72F_Pure 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 136, name: "Perfume 77F_MWay 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 137, name: "Perfume 78F_Cher 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 138, name: "Perfume 79F_Libre 50ml",                       price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 139, name: "Perfume 80F_Idole 50ml",                       price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 140, name: "Perfume 81F_Si Passion 50ml",                  price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 141, name: "Perfume 82F_Olymp Solar 50ml",                 price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 142, name: "Perfume 83F_212 Forever 50ml",                 price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 143, name: "Perfume 85F_Amor Amor 50ml",                   price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 144, name: "Perfume 87F_Scandal 50ml",                     price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 145, name: "Perfume 90F_L-Blue 50ml",                      price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 146, name: "Perfume 92F_Divine 50ml",                      price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
-                { id: 147, name: "Perfume 95F_Angel Nova 50ml",                  price: 15100, stock: 10, image: "", description: "Línea Perfume - Femenino 50ml" , grupo: "Línea Perfume" },
+                { id: 123, name: "Perfume 01F_212 50ml",                         price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 124, name: "Perfume 16F_Flow 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 125, name: "Perfume 18F_Hall 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 126, name: "Perfume 22F_LadyMillion 50ml",                 price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 127, name: "Perfume 30F_Honor & Glory 50ml",               price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 128, name: "Perfume 40F_Nina 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 129, name: "Perfume 50F_Yara 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 130, name: "Perfume 54F_Bacarat 50ml",                     price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 131, name: "Perfume 65F_LaVie 50ml",                       price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 132, name: "Perfume 66F_Si 50ml",                          price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 133, name: "Perfume 67F_Olymp 50ml",                       price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 134, name: "Perfume 69F_Good Girl 50ml",                   price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 135, name: "Perfume 72F_Pure 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 136, name: "Perfume 77F_MWay 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 137, name: "Perfume 78F_Cher 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 138, name: "Perfume 79F_Libre 50ml",                       price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 139, name: "Perfume 80F_Idole 50ml",                       price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 140, name: "Perfume 81F_Si Passion 50ml",                  price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 141, name: "Perfume 82F_Olymp Solar 50ml",                 price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 142, name: "Perfume 83F_212 Forever 50ml",                 price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 143, name: "Perfume 85F_Amor Amor 50ml",                   price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 144, name: "Perfume 87F_Scandal 50ml",                     price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 145, name: "Perfume 90F_L-Blue 50ml",                      price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 146, name: "Perfume 92F_Divine 50ml",                      price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 147, name: "Perfume 95F_Angel Nova 50ml",                  price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
 
-                // LÍNEA PERFUME — Perfume Personal Masculino (50ml)
-                { id: 148, name: "Perfume 01M_212 50ml",                         price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 149, name: "Perfume 10M_HBoss 50ml",                       price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 150, name: "Perfume 20M_Oud Glory 50ml",                   price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 151, name: "Perfume 31M_OMillion 50ml",                    price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 152, name: "Perfume 45M_Invict 50ml",                      price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 153, name: "Perfume 48M_Sauvage 50ml",                     price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 154, name: "Perfume 50M_Bboy 50ml",                        price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 155, name: "Perfume 51M_Hero212 50ml",                     price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 156, name: "Perfume 52M_Invict Onyx 50ml",                 price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 157, name: "Perfume 55M_Phantom 50ml",                     price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 158, name: "Perfume 57M_Scandal 50ml",                     price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 159, name: "Perfume 60M_Wanted 50ml",                      price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
-                { id: 160, name: "Perfume 62M_Sauvage Elixir 50ml",              price: 15100, stock: 10, image: "", description: "Línea Perfume - Masculino 50ml" , grupo: "Línea Perfume" },
+                { id: 148, name: "Perfume 01M_212 50ml",                         price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 149, name: "Perfume 10M_HBoss 50ml",                       price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 150, name: "Perfume 20M_Oud Glory 50ml",                   price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 151, name: "Perfume 31M_OMillion 50ml",                    price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 152, name: "Perfume 45M_Invict 50ml",                      price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 153, name: "Perfume 48M_Sauvage 50ml",                     price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 154, name: "Perfume 50M_Bboy 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 155, name: "Perfume 51M_Hero212 50ml",                     price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 156, name: "Perfume 52M_Invict Onyx 50ml",                 price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 157, name: "Perfume 55M_Phantom 50ml",                     price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 158, name: "Perfume 57M_Scandal 50ml",                     price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 159, name: "Perfume 60M_Wanted 50ml",                      price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 160, name: "Perfume 62M_Sauvage Elixir 50ml",              price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
 
-                // LÍNEA PERFUME — Unisex (50ml)
-                { id: 161, name: "Perfume 05_One 50ml",                          price: 15100, stock: 10, image: "", description: "Línea Perfume - Unisex 50ml" , grupo: "Línea Perfume" },
-                { id: 162, name: "Perfume 12_Erba Pura 50ml",                    price: 15100, stock: 10, image: "", description: "Línea Perfume - Unisex 50ml" , grupo: "Línea Perfume" },
+                { id: 161, name: "Perfume 05_One 50ml",                          price: 15100, stock: 10, image: "", description: "Perfume Unisex 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Unisex 50ml" },
+                { id: 162, name: "Perfume 12_Erba Pura 50ml",                    price: 15100, stock: 10, image: "", description: "Perfume Unisex 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Unisex 50ml" },
 
-                // LÍNEA PERFUME — Aromatizador de Telas y Ambientes (120ml)
-                { id: 163, name: "Arom. Perfume 01F_212 120ml",                  price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 164, name: "Arom. Perfume 05_One 120ml",                   price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 165, name: "Arom. Perfume 31M_Million 120ml",              price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 166, name: "Arom. Perfume 45M_Invic 120ml",                price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 167, name: "Arom. Perfume 48M_Sauvage 120ml",              price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 168, name: "Arom. Perfume 60M_Wanted 120ml",               price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 169, name: "Arom. Perfume 65F_LaVie 120ml",                price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 170, name: "Arom. Perfume 67F_Olymp 120ml",                price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 171, name: "Arom. Perfume 78F_Cher 120ml",                 price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
-                { id: 172, name: "Arom. Perfume 81F_SiPassion 120ml",            price: 2550, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 120ml" , grupo: "Línea Perfume" },
+                { id: 163, name: "Arom. Perfume 01F_212 120ml",                  price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 164, name: "Arom. Perfume 05_One 120ml",                   price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 165, name: "Arom. Perfume 31M_Million 120ml",              price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 166, name: "Arom. Perfume 45M_Invic 120ml",                price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 167, name: "Arom. Perfume 48M_Sauvage 120ml",              price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 168, name: "Arom. Perfume 60M_Wanted 120ml",               price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 169, name: "Arom. Perfume 65F_LaVie 120ml",                price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 170, name: "Arom. Perfume 67F_Olymp 120ml",                price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 171, name: "Arom. Perfume 78F_Cher 120ml",                 price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 172, name: "Arom. Perfume 81F_SiPassion 120ml",            price: 2550, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
 
-                // LÍNEA PERFUME — Aromatizador de Telas y Ambientes (500ml, sin gatillo)
-                { id: 173, name: "Arom. Perfume 01F_212 500ml",                  price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 174, name: "Arom. Perfume 05_One 500ml",                   price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 175, name: "Arom. Perfume 31M_Million 500ml",              price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 176, name: "Arom. Perfume 45M_Invic 500ml",                price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 177, name: "Arom. Perfume 48M_Sauvage 500ml",              price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 178, name: "Arom. Perfume 60M_Wanted 500ml",               price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 179, name: "Arom. Perfume 65F_LaVie 500ml",                price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 180, name: "Arom. Perfume 67F_Olymp 500ml",                price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 181, name: "Arom. Perfume 78F_Cher 500ml",                 price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
-                { id: 182, name: "Arom. Perfume 81F_SiPassion 500ml",            price: 6650, stock: 10, image: "", description: "Línea Perfume - Aromatizador de Telas y Ambientes 500ml" , grupo: "Línea Perfume" },
+                { id: 173, name: "Arom. Perfume 01F_212 500ml",                  price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 174, name: "Arom. Perfume 05_One 500ml",                   price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 175, name: "Arom. Perfume 31M_Million 500ml",              price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 176, name: "Arom. Perfume 45M_Invic 500ml",                price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 177, name: "Arom. Perfume 48M_Sauvage 500ml",              price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 178, name: "Arom. Perfume 60M_Wanted 500ml",               price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 179, name: "Arom. Perfume 65F_LaVie 500ml",                price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 180, name: "Arom. Perfume 67F_Olymp 500ml",                price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 181, name: "Arom. Perfume 78F_Cher 500ml",                 price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 182, name: "Arom. Perfume 81F_SiPassion 500ml",            price: 6650, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
 
-                // LÍNEA PERFUME — Aerosol (270ml)
-                { id: 183, name: "Aerosol Perfume 78F_Cher 270ml",               price: 4465, stock: 10, image: "", description: "Línea Perfume - Aerosol 270ml" , grupo: "Línea Perfume" },
+                { id: 183, name: "Aerosol Perfume 78F_Cher 270ml",               price: 4465, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Perfume", subgrupo: "Aerosol 270ml" },
 
-                // LÍNEA AUTO — Difusor para Auto (10ml)
-                { id: 184, name: "Difusor Auto Acqua Car 10ml",                  price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" , grupo: "Línea Auto" },
-                { id: 185, name: "Difusor Auto Candy 10ml 🆕",                   price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml — NUEVO" , grupo: "Línea Auto" },
-                { id: 186, name: "Difusor Auto Glasé de Naranja 10ml",           price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" , grupo: "Línea Auto" },
-                { id: 187, name: "Difusor Auto Maderas de Oriente 10ml",         price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" , grupo: "Línea Auto" },
-                { id: 188, name: "Difusor Auto Manzana Verde 10ml",              price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" , grupo: "Línea Auto" },
-                { id: 189, name: "Difusor Auto Piña Caribe 10ml",                price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" , grupo: "Línea Auto" },
-                { id: 190, name: "Difusor Auto Polo Grey 10ml 🆕",               price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml — NUEVO" , grupo: "Línea Auto" },
-                { id: 191, name: "Difusor Auto Lavanda 10ml",                    price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" , grupo: "Línea Auto" },
-                { id: 192, name: "Difusor Auto Verbena 10ml",                    price: 4395, stock: 10, image: "", description: "Línea Auto - Difusor para Auto 10ml" , grupo: "Línea Auto" },
+                { id: 184, name: "Difusor Auto Acqua Car 10ml",                  price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 185, name: "Difusor Auto Candy 10ml 🆕",                   price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml — NUEVO", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 186, name: "Difusor Auto Glasé de Naranja 10ml",           price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 187, name: "Difusor Auto Maderas de Oriente 10ml",         price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 188, name: "Difusor Auto Manzana Verde 10ml",              price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 189, name: "Difusor Auto Piña Caribe 10ml",                price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 190, name: "Difusor Auto Polo Grey 10ml 🆕",               price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml — NUEVO", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 191, name: "Difusor Auto Lavanda 10ml",                    price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 192, name: "Difusor Auto Verbena 10ml",                    price: 4395, stock: 10, image: "", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
 
-                // LÍNEA AUTO — Aromatizador para Auto (120ml)
-                { id: 193, name: "Aromatizador Auto Acqua Car 120ml",            price: 2225, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml" , grupo: "Línea Auto" },
-                { id: 194, name: "Aromatizador Auto Candy 120ml 🆕",             price: 2225, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml — NUEVO" , grupo: "Línea Auto" },
-                { id: 195, name: "Aromatizador Auto Manzana Verde 120ml",        price: 2225, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml" , grupo: "Línea Auto" },
-                { id: 196, name: "Aromatizador Auto Piña Caribe 120ml",          price: 2225, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml" , grupo: "Línea Auto" },
-                { id: 197, name: "Aromatizador Auto Polo Grey 120ml 🆕",         price: 2225, stock: 10, image: "", description: "Línea Auto - Aromatizador para Auto 120ml — NUEVO" , grupo: "Línea Auto" },
+                { id: 193, name: "Aromatizador Auto Acqua Car 120ml",            price: 2225, stock: 10, image: "", description: "Aromatizador para Auto 120ml", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 194, name: "Aromatizador Auto Candy 120ml 🆕",             price: 2225, stock: 10, image: "", description: "Aromatizador para Auto 120ml — NUEVO", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 195, name: "Aromatizador Auto Manzana Verde 120ml",        price: 2225, stock: 10, image: "", description: "Aromatizador para Auto 120ml", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 196, name: "Aromatizador Auto Piña Caribe 120ml",          price: 2225, stock: 10, image: "", description: "Aromatizador para Auto 120ml", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 197, name: "Aromatizador Auto Polo Grey 120ml 🆕",         price: 2225, stock: 10, image: "", description: "Aromatizador para Auto 120ml — NUEVO", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
 
-                // LÍNEA SALUD
-                { id: 198, name: "Alcohol en Gel Acqua 500ml",                   price: 1970, stock: 10, image: "", description: "Línea Salud - Alcohol en Gel 500ml" , grupo: "Línea Salud" },
+                { id: 198, name: "Alcohol en Gel Acqua 500ml",                   price: 1970, stock: 10, image: "", description: "Alcohol en Gel 500ml", grupo: "Línea Salud", subgrupo: "Alcohol en Gel" },
 
-                // OTROS PRODUCTOS — Home Spray (250ml)
-                { id: 199, name: "Home Spray Gardenia & Flores Blancas 250ml",   price: 4675, stock: 10, image: "", description: "Otros Productos - Home Spray 250ml" , grupo: "Otros Productos" },
-                { id: 200, name: "Home Spray Orquídea & Flor de Loto 250ml",     price: 4675, stock: 10, image: "", description: "Otros Productos - Home Spray 250ml" , grupo: "Otros Productos" },
-                { id: 201, name: "Home Spray Amapola & Rosas 250ml",             price: 4675, stock: 10, image: "", description: "Otros Productos - Home Spray 250ml" , grupo: "Otros Productos" },
+                { id: 199, name: "Home Spray Gardenia & Flores Blancas 250ml",   price: 4675, stock: 10, image: "", description: "Home Spray 250ml", grupo: "Otros Productos", subgrupo: "Home Spray" },
+                { id: 200, name: "Home Spray Orquídea & Flor de Loto 250ml",     price: 4675, stock: 10, image: "", description: "Home Spray 250ml", grupo: "Otros Productos", subgrupo: "Home Spray" },
+                { id: 201, name: "Home Spray Amapola & Rosas 250ml",             price: 4675, stock: 10, image: "", description: "Home Spray 250ml", grupo: "Otros Productos", subgrupo: "Home Spray" },
 
-                // ACCESORIOS
-                { id: 202, name: "Ambientador Analógico",                        price: 16715, stock: 10, image: "", description: "Accesorios" , grupo: "Otros Productos" },
-                { id: 203, name: "Ambientador Analógico 220V",                   price: 20360, stock: 10, image: "", description: "Accesorios" , grupo: "Otros Productos" },
-                { id: 204, name: "Cubo Difusor",                                 price: 3965,  stock: 10, image: "", description: "Accesorios" , grupo: "Otros Productos" },
+                { id: 202, name: "Ambientador Analógico",                        price: 16715, stock: 10, image: "", description: "Accesorio", grupo: "Otros Productos", subgrupo: "Accesorios" },
+                { id: 203, name: "Ambientador Analógico 220V",                   price: 20360, stock: 10, image: "", description: "Accesorio", grupo: "Otros Productos", subgrupo: "Accesorios" },
+                { id: 204, name: "Cubo Difusor",                                 price: 3965,  stock: 10, image: "", description: "Accesorio", grupo: "Otros Productos", subgrupo: "Accesorios" },
 
-                // COMPLEMENTOS
-                { id: 205, name: "Bomba Cremera",                                price: 1030,  stock: 10, image: "", description: "Complementos" , grupo: "Otros Productos" },
-                { id: 206, name: "Gatillo",                                      price: 750,   stock: 10, image: "", description: "Complementos" , grupo: "Otros Productos" },
+                { id: 205, name: "Bomba Cremera",                                price: 1030,  stock: 10, image: "", description: "Complemento", grupo: "Otros Productos", subgrupo: "Complementos" },
+                { id: 206, name: "Gatillo",                                      price: 750,   stock: 10, image: "", description: "Complemento", grupo: "Otros Productos", subgrupo: "Complementos" },
             ]);
 
             // Estado de Usuarios
@@ -396,6 +374,8 @@
             const [user, setUser] = useState(null);
             const [notif, setNotif] = useState(null);
             const [busqueda, setBusqueda] = useState('');
+            const [grupoActivo, setGrupoActivo] = useState(null);
+            const [subgrupoActivo, setSubgrupoActivo] = useState(null);
 
             const showMsg = (m, t = 'success') => { setNotif({ m, t }); setTimeout(() => setNotif(null), 3000); };
             const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(p);
@@ -405,8 +385,28 @@
 
             // Filtro y agrupado
             const ORDEN_GRUPOS = ["Línea Hogar","Línea Bebé","Línea Infantil","Línea Cuerpo","Línea Perfume","Línea Auto","Línea Salud","Otros Productos"];
-            const productosFiltrados = productos.filter(p => p.name.toLowerCase().includes(busqueda.toLowerCase()) || p.description.toLowerCase().includes(busqueda.toLowerCase()));
-            const grupos = ORDEN_GRUPOS.map(g => ({ grupo: g, items: productosFiltrados.filter(p => p.grupo === g) })).filter(g => g.items.length > 0);
+            const productosFiltrados = productos.filter(p => {
+                const matchBusqueda = p.name.toLowerCase().includes(busqueda.toLowerCase()) || p.description.toLowerCase().includes(busqueda.toLowerCase());
+                const matchGrupo = busqueda ? true : (grupoActivo ? p.grupo === grupoActivo : true);
+                const matchSubgrupo = busqueda ? true : (subgrupoActivo ? p.subgrupo === subgrupoActivo : true);
+                return matchBusqueda && matchGrupo && matchSubgrupo;
+            });
+            const grupos = ORDEN_GRUPOS.map(g => {
+                const itemsGrupo = productosFiltrados.filter(p => p.grupo === g);
+                if (itemsGrupo.length === 0) return null;
+                const subgruposMap = {};
+                itemsGrupo.forEach(p => {
+                    const sg = p.subgrupo || 'General';
+                    if (!subgruposMap[sg]) subgruposMap[sg] = [];
+                    subgruposMap[sg].push(p);
+                });
+                return { grupo: g, items: itemsGrupo, subgrupos: subgruposMap };
+            }).filter(Boolean);
+            const subgruposDelGrupo = grupoActivo
+                ? [...new Set(productos.filter(p => p.grupo === grupoActivo).map(p => p.subgrupo).filter(Boolean))]
+                : [];
+            const ICONOS_GRUPO = {"Línea Hogar":"home","Línea Bebé":"baby","Línea Infantil":"smile","Línea Cuerpo":"heart","Línea Perfume":"wind","Línea Auto":"car","Línea Salud":"shield","Otros Productos":"package"};
+
 
             // Lógica Carrito
             const subtotal = carrito.reduce((t, i) => t + (i.precioUsado * i.cantidad), 0);
@@ -515,39 +515,93 @@
                                     )}
                                 </div>
 
+                                {/* Menú de grupos — nivel 1 */}
+                                {!busqueda && (
+                                    <div className="space-y-3">
+                                        <div className="flex flex-wrap gap-2 justify-center">
+                                            <button
+                                                onClick={() => { setGrupoActivo(null); setSubgrupoActivo(null); }}
+                                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${!grupoActivo ? 'bg-aroma-500 text-white border-aroma-500 shadow-lg shadow-aroma-100' : 'bg-white text-slate-400 border-slate-100 hover:border-aroma-200 hover:text-aroma-500'}`}
+                                            >
+                                                <Icon name="grid" className="w-3 h-3" /> Todos
+                                            </button>
+                                            {ORDEN_GRUPOS.filter(g => productos.some(p => p.grupo === g)).map(g => (
+                                                <button
+                                                    key={g}
+                                                    onClick={() => { setGrupoActivo(g); setSubgrupoActivo(null); }}
+                                                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${grupoActivo === g ? 'bg-aroma-500 text-white border-aroma-500 shadow-lg shadow-aroma-100' : 'bg-white text-slate-400 border-slate-100 hover:border-aroma-200 hover:text-aroma-500'}`}
+                                                >
+                                                    <Icon name={ICONOS_GRUPO[g] || 'tag'} className="w-3 h-3" />
+                                                    {g.replace('Línea ', '')}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Nivel 2: subgrupos del grupo activo */}
+                                        {grupoActivo && subgruposDelGrupo.length > 1 && (
+                                            <div className="flex flex-wrap gap-2 justify-center pt-1">
+                                                <button
+                                                    onClick={() => setSubgrupoActivo(null)}
+                                                    className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${!subgrupoActivo ? 'bg-aroma-600 text-white border-aroma-600' : 'bg-aroma-50 text-aroma-500 border-aroma-100 hover:bg-aroma-100'}`}
+                                                >
+                                                    Todo {grupoActivo.replace('Línea ', '')}
+                                                </button>
+                                                {subgruposDelGrupo.map(sg => (
+                                                    <button
+                                                        key={sg}
+                                                        onClick={() => setSubgrupoActivo(sg)}
+                                                        className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${subgrupoActivo === sg ? 'bg-aroma-600 text-white border-aroma-600' : 'bg-aroma-50 text-aroma-500 border-aroma-100 hover:bg-aroma-100'}`}
+                                                    >
+                                                        {sg}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* Resultados */}
                                 {grupos.length === 0 && (
                                     <div className="text-center py-20 text-slate-300 font-bold uppercase tracking-widest text-xs">Sin resultados para "{busqueda}"</div>
                                 )}
 
-                                {grupos.map(({ grupo, items }) => (
-                                    <div key={grupo} className="space-y-4">
+                                {grupos.map(({ grupo, items, subgrupos }) => (
+                                    <div key={grupo} className="space-y-6">
                                         {/* Título de grupo */}
                                         <div className="flex items-center gap-4">
                                             <h3 className="font-extrabold text-lg uppercase tracking-widest text-aroma-600 whitespace-nowrap">{grupo}</h3>
                                             <div className="flex-1 h-px bg-aroma-100"></div>
                                             <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{items.length} productos</span>
                                         </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                            {items.map(p => {
-                                                const precio = getPrecio(p);
-                                                return (
-                                                    <div key={p.id} className="product-card bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm transition-all group">
-                                                        {p.image && (
-                                                            <div className="aspect-square rounded-3xl overflow-hidden mb-6 bg-slate-50 relative">
-                                                                <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        {/* Subgrupos */}
+                                        {Object.entries(subgrupos).map(([sg, sgItems]) => (
+                                            <div key={sg} className="space-y-3">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">{sg}</span>
+                                                    <div className="flex-1 h-px bg-slate-50"></div>
+                                                </div>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                                    {sgItems.map(p => {
+                                                        const precio = getPrecio(p);
+                                                        return (
+                                                            <div key={p.id} className="product-card bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm transition-all group">
+                                                                {p.image && (
+                                                                    <div className="aspect-square rounded-3xl overflow-hidden mb-6 bg-slate-50 relative">
+                                                                        <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                                                    </div>
+                                                                )}
+                                                                <h4 className="font-bold text-base mb-1 text-slate-800 leading-snug">{p.name}</h4>
+                                                                <p className="text-xs text-slate-400 line-clamp-2 mb-4 leading-relaxed">{p.description}</p>
+                                                                <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-50">
+                                                                    <span className="text-xl font-black text-aroma-600 italic">{formatPrice(precio)}</span>
+                                                                    <button onClick={() => { setCarrito([...carrito, {...p, precioUsado: precio, cantidad: 1}]); showMsg("Añadido"); }} className="bg-aroma-50 text-aroma-500 p-3 rounded-xl hover:bg-aroma-500 hover:text-white transition-all"><Icon name="plus" /></button>
+                                                                </div>
                                                             </div>
-                                                        )}
-                                                        <h4 className="font-bold text-base mb-1 text-slate-800 leading-snug">{p.name}</h4>
-                                                        <p className="text-xs text-slate-400 line-clamp-2 mb-4 leading-relaxed">{p.description}</p>
-                                                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-50">
-                                                            <span className="text-xl font-black text-aroma-600 italic">{formatPrice(precio)}</span>
-                                                            <button onClick={() => { setCarrito([...carrito, {...p, precioUsado: precio, cantidad: 1}]); showMsg("Añadido"); }} className="bg-aroma-50 text-aroma-500 p-3 rounded-xl hover:bg-aroma-500 hover:text-white transition-all"><Icon name="plus" /></button>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>
