@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>San Martin Aromas - Sistema Integral</title>
+
+    <!-- 4. Precarga de fuentes optimizada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://unpkg.com">
+
     <!-- Librerías -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- 2. Versiones de producción (mucho más livianas) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <script>
         tailwind.config = {
             theme: {
@@ -24,6 +32,7 @@
     </script>
 
     <style>
+        /* 4. Fuentes con display=swap para no bloquear render */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
         body { font-family: 'Montserrat', sans-serif; background-color: #fafcfc; color: #264b4a; }
         .font-serif { font-family: 'Playfair Display', serif; }
@@ -34,6 +43,8 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #3e8e89; border-radius: 10px; }
+        /* 1. Placeholder para imágenes lazy */
+        img[loading="lazy"] { background: #f0f9f9; }
     </style>
 </head>
 <body>
@@ -660,7 +671,7 @@
                                                                 <div key={p.id} className={`flex items-center gap-4 bg-white rounded-2xl px-5 py-4 border shadow-sm transition-all hover:shadow-md ${promo ? 'border-amber-200 bg-amber-50/30' : 'border-slate-100'}`}>
                                                                     {p.image ? (
                                                                         <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-50 flex-shrink-0">
-                                                                            <img src={p.image} className="w-full h-full object-contain" />
+                                                                            <img src={p.image} loading="lazy" className="w-full h-full object-contain" />
                                                                         </div>
                                                                     ) : (
                                                                         <div className="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center flex-shrink-0">
@@ -693,7 +704,7 @@
                                                                 )}
                                                                 {p.image && (
                                                                     <div className={`aspect-square rounded-3xl overflow-hidden mb-6 relative ${promo ? 'bg-amber-50' : 'bg-slate-50'}`}>
-                                                                        <img src={p.image} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+                                                                        <img src={p.image} loading="lazy" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
                                                                     </div>
                                                                 )}
                                                                 <h4 className="font-bold text-base mb-1 text-slate-800 leading-snug">{cleanName}</h4>
@@ -763,7 +774,7 @@
                                                 <div key={i} className="flex justify-between items-center border-b pb-4 border-slate-50">
                                                     <div className="flex items-center gap-4 flex-1 min-w-0">
                                                         <div className="w-14 h-14 rounded-2xl bg-slate-50 overflow-hidden flex items-center justify-center flex-shrink-0">
-                                                            {item.image ? <img src={item.image} className="w-full h-full object-cover"/> : <Icon name="package" className="w-6 h-6 text-slate-300"/>}
+                                                            {item.image ? <img src={item.image} loading="lazy" className="w-full h-full object-cover"/> : <Icon name="package" className="w-6 h-6 text-slate-300"/>}
                                                         </div>
                                                         <div className="min-w-0">
                                                             <p className="font-bold text-slate-700 text-sm leading-snug truncate">{item.name.replace('⭐ PROMO','').trim()}</p>
