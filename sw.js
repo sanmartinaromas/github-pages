@@ -1,6 +1,6 @@
-const CACHE_NAME = 'san-martin-aromas-v1';
+const CACHE_NAME = 'san-martin-aromas-v2';
 const ASSETS = [
-  '/',
+  '/splash.html',
   '/index.html',
   '/manifest.json',
   '/icon-192x192.png',
@@ -9,7 +9,9 @@ const ASSETS = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      return Promise.allSettled(ASSETS.map(url => cache.add(url)));
+    })
   );
   self.skipWaiting();
 });
