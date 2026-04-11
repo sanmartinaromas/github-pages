@@ -377,7 +377,7 @@
 
             // Estado de Usuarios
             const [usuarios] = useState([
-                { id: "u1", nombre: "Distribuidora Mendoza", email: "mayorista@test.com", tipo: "revendedor" },
+                { id: "u1", nombre: "Distribuidora Mendoza", email: "mayor", tipo: "revendedor" },
                 { id: "u2", nombre: "Revendedor", email: "revendedor@ejemplo.com", tipo: "revendedor" }
             ]);
 
@@ -429,12 +429,14 @@
             const [codigoDescuento, setCodigoDescuento] = useState('');
             const [descuentoAplicado, setDescuentoAplicado] = useState(false);
             const CODIGOS_DESCUENTO = { 'EL LOCO NESTOR': 10 };
+            const CODIGOS_DESCUENTO = { 'DESCUENTO10': 10 };
+            const CODIGOS_DESCUENTO = { 'DESCUENTO15': 15 };
             const porcentajeDescuento = descuentoAplicado ? (CODIGOS_DESCUENTO[codigoDescuento.toUpperCase()] || 0) : 0;
             const subtotal = carrito.reduce((t, i) => t + (i.precioUsado * i.cantidad), 0);
             const descuento = (!user || user?.tipo !== 'revendedor') ? subtotal * porcentajeDescuento / 100 : 0;
             const total = subtotal - descuento;
             const cantidadTotal = carrito.reduce((t, i) => t + i.cantidad, 0);
-            const minimoRevendedor = 5;
+            const minimoRevendedor = 3;
             const puedeConfirmar = user?.tipo === 'revendedor' ? cantidadTotal >= minimoRevendedor : true;
             const gananciaRevendedor = user?.tipo === 'revendedor'
                 ? carrito.reduce((t, i) => t + ((PRECIOS_PUBLICO[i.id] || i.precioUsado) - i.precioUsado) * i.cantidad, 0)
