@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Martin Aromas - Sistema Integral</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="icon-192x192.png" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="San Martín Aromas" />
+
+    <!-- 4. Precarga de fuentes optimizada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://unpkg.com">
+
+    <!-- Librerías -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Versiones de producción (mucho más livianas) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        aroma: { 500: '#3e8e89', 400: '#58aaa5', 600: '#31726f', 50: '#f0f9f9' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 4. Fuentes con display=swap para no bloquear render */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+        body { font-family: 'Montserrat', sans-serif; background-color: #fafcfc; color: #264b4a; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -15px rgba(88, 170, 165, 0.2); }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #3e8e89; border-radius: 10px; }
+        /* 1. Placeholder para imágenes lazy */
+        img[loading="lazy"] { background: #f0f9f9; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const LOGO_URL = "https://lh3.googleusercontent.com/d/14d7ZtlSz-x6WwwDtHf6ks_nVCxYstwd1";
+        const WHATSAPP = "5492634733777";
+        const WHATSAPP_SAPHIRUS = "5492634733777"; // Sandra Marzzan - Saphirus
+        const FORMSPREE_ID = "xgopdoap"; 
+
+        const Icon = ({ name, className = "w-5 h-5" }) => {
+            const iconRef = useRef(null);
+            useEffect(() => {
+                if (window.lucide && iconRef.current) {
+                    iconRef.current.innerHTML = '';
+                    const iconElement = document.createElement('i');
+                    iconElement.setAttribute('data-lucide', name);
+                    iconElement.className = className;
+                    iconRef.current.appendChild(iconElement);
+                    window.lucide.createIcons();
+                }
+            }, [name, className]);
+            return <div ref={iconRef} className="inline-flex items-center justify-center pointer-events-none" />;
+        };
+
+        function App() {
+            const [vista, setVista] = useState('inicio');
+            const [cargandoEnvio, setCargandoEnvio] = useState(false);
+
+            // Mapa de precios públicos por id (del PDF público)
+            const PRECIOS_PUBLICO = {
+                // Aromatizador 120ml
+                1:2975,2:2975,3:2975,4:2975,5:2975,6:2975,7:2975,8:2975,9:2975,10:2529,
+                11:2975,12:2975,13:2975,14:2975,15:2975,16:2975,17:2975,18:2975,19:2529,
+                20:2975,21:2529,22:2975,
+                // Aromatizador 500ml
+                23:7275,24:7275,25:7275,26:7275,27:7275,28:7275,29:7275,30:7275,31:7275,32:6184,
+                33:7275,34:7275,35:7275,36:7275,37:7275,38:7275,39:7275,40:7275,41:6184,
+                42:7275,43:6184,44:7275,
+                // Aerosol 270ml
+                45:6030,46:6030,47:6030,48:6030,49:6030,50:6030,51:6030,52:6030,53:6030,54:6030,
+                55:5126,56:6030,57:6030,58:6030,59:6030,60:6030,61:6030,62:6030,63:6030,64:5126,
+                65:6030,66:5126,67:6030,
+                // Difusor aromático 130ml
+                68:5895,69:5895,70:5895,71:5895,72:5895,73:5895,74:5011,75:5895,76:5895,77:5895,
+                78:5895,79:5895,80:5895,81:5011,82:5011,83:5895,
+                // Aceite 12ml
+                84:3550,85:3550,86:3550,87:3550,88:3550,89:3018,90:3550,
+                // Línea Bebé arom 500ml
+                91:8815,92:8815,93:8815,94:8815,95:8815,
+                // Bebé aerosol 270ml
+                96:6030,97:6030,98:6030,
+                // Bebé agua de colonia 120ml
+                99:5020,100:5020,101:5020,102:5020,
+                // Infantil arom 120ml
+                103:3380,104:3380,105:3380,
+                // Infantil arom 500ml
+                106:8815,107:8815,108:8815,109:8815,110:8815,
+                // Infantil aerosol 270ml
+                111:6030,112:6030,113:6030,
+                // Infantil colonia 120ml
+                114:5825,115:5825,116:5825,117:5825,
+                // Jabón líquido 300ml
+                118:7145,119:7145,120:7145,121:7145,122:7145,
+                // Perfume femenino 50ml
+                123:19630,124:19630,125:19630,126:19630,127:19630,128:19630,129:19630,130:19630,
+                131:19630,132:19630,133:19630,134:19630,135:19630,136:19630,137:19630,138:19630,
+                139:19630,140:19630,141:19630,142:19630,143:19630,144:19630,145:19630,146:19630,147:19630,
+                // Perfume masculino 50ml
+                148:19630,149:19630,150:19630,151:19630,152:19630,153:19630,154:19630,155:19630,
+                156:19630,157:19630,158:19630,159:19630,160:19630,
+                // Perfume unisex 50ml
+                161:19630,162:19630,
+                // Arom. perfume 120ml
+                163:3380,164:3380,165:3380,166:3380,167:3380,168:3380,169:3380,170:3380,171:3380,172:3380,
+                // Arom. perfume 500ml
+                173:8815,174:8815,175:8815,176:8815,177:8815,178:8815,179:8815,180:8815,181:8815,182:8815,
+                // Aerosol perfume
+                183:6030,
+                // Auto difusor
+                184:5825,185:5825,186:5825,187:5825,188:5825,189:5825,190:5825,191:5825,192:5825,
+                // Auto aromatizador
+                193:2950,194:2950,195:2950,196:2950,197:2950,
+                // Salud
+                198:2615,
+                // Home spray
+                199:6080,200:6080,201:6080,
+                // Accesorios
+                202:19610,203:23885,204:4660,
+                // Complementos
+                205:1185,206:860,
+            };
+            
+            // productos: price = reventa, grupo = sección del PDF
+            const [productos] = useState([
+                { id: 2,   name: "Aromatizador Ananá y Coco 120ml",              price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Anana y Coco.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 3,   name: "Aromatizador Azahares 120ml",                  price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Azahares.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 4,   name: "Aromatizador Burbujas Jabón 120ml",            price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Burbujas de Jabón.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 5,   name: "Aromatizador Coco y Vainilla 120ml",           price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Coco y Vainilla.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 6,   name: "Aromatizador Flor de Loto 120ml",              price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Flor de Loto.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 7,   name: "Aromatizador Flores Cítricas 120ml",           price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Flores Citricas.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 8,   name: "Aromatizador Frutas Tropicales 120ml",         price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Frutas Tropicales.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 9,   name: "Aromatizador Glasé de Naranja 120ml",          price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Glase de Naranja.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 10,  name: "Aromatizador Hoja de Higuera 120ml ⭐ PROMO",           price: 1947, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_Hojas de Higuera.png", description: "Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 11,  name: "Aromatizador Limón Manzanilla 120ml",          price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Limon y Manzanilla.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 12,  name: "Aromatizador Maderas de Oriente 120ml",        price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Maderas de Oriente.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 13,  name: "Aromatizador Marina 120ml",                    price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Marina.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 14,  name: "Aromatizador Naranja Pimienta 120ml",          price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Naranja y Pimienta.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 15,  name: "Aromatizador Pistacho 120ml",                  price: 2290, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 16,  name: "Aromatizador Pitanga 120ml",                   price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Pitanga.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 17,  name: "Aromatizador Suavechito 120ml",                price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Suavechito.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 18,  name: "Aromatizador Suavidad Floral 120ml",           price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Suavidad Floral.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 19,  name: "Aromatizador Té Negro y Damasco 120ml ⭐ PROMO",         price: 1947, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Te negro y Damasco.png", description: "Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 20,  name: "Aromatizador Uva 120ml",                       price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Uva.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 21,  name: "Aromatizador Vainilla y Almendra 120ml ⭐ PROMO",        price: 1947,stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Vainilla y Almendra.png", description: "Aromatizador de Telas y Ambientes 120ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+                { id: 22,  name: "Aromatizador Verbena 120ml",                   price: 2290, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LH_Maquetas_02_Verbena.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Hogar", subgrupo: "Aromatizador 120ml" },
+
+                { id: 23,  name: "Aromatizador Acqua 500ml",                     price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_acqua_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 24,  name: "Aromatizador Ananá y Coco 500ml",              price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Ananá y Coco_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 25,  name: "Aromatizador Azahares 500ml",                  price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Azahares_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 26,  name: "Aromatizador Burbujas Jabón 500ml",            price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Burbujas de Jabón_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 27,  name: "Aromatizador Coco y Vainilla 500ml",           price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Coco y Vanilla_Tapa.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 28,  name: "Aromatizador Flor de Loto 500ml",              price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Flor de Loto_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 29,  name: "Aromatizador Flores Cítricas 500ml",           price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Flores Cítricas_Tapa.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 30,  name: "Aromatizador Frutas Tropicales 500ml",         price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Frutas Tropicales_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 31,  name: "Aromatizador Glasé de Naranja 500ml",          price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Glase de Naranja_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 32,  name: "Aromatizador Hoja de Higuera 500ml ⭐ PROMO",           price: 4756, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Hojas de higuera_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo) — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 33,  name: "Aromatizador Limón Manzanilla 500ml",          price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Limon y Manzanilla_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 34,  name: "Aromatizador Maderas de Oriente 500ml",        price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Maderas de Oriente_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 35,  name: "Aromatizador Marina 500ml",                    price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Marina_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 36,  name: "Aromatizador Naranja Pimienta 500ml",          price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Naranja y Pimienta_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 37,  name: "Aromatizador Pistacho 500ml",                  price: 5595, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 38,  name: "Aromatizador Pitanga 500ml",                   price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Pitanga_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 39,  name: "Aromatizador Suavechito 500ml",                price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Suavechito_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 40,  name: "Aromatizador Suavidad Floral 500ml",           price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Suavidad Floral_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 41,  name: "Aromatizador Té Negro y Damasco 500ml ⭐ PROMO",         price: 4756, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Té negro y damasco_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo) — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 42,  name: "Aromatizador Uva 500ml",                       price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Uva_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 43,  name: "Aromatizador Vainilla y Almendra 500ml ⭐ PROMO",        price: 4756,stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Vainilla y almendra_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo) — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+                { id: 44,  name: "Aromatizador Verbena 500ml",                   price: 5595, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AROMATIZADORES - LH/500ML/CON TAPA/2024_SMA_Etiquetas_Aromatizador500ml_LH_Maquetas_02_Verbena_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml (sin gatillo)", grupo: "Línea Hogar", subgrupo: "Aromatizador 500ml" },
+
+                { id: 45,  name: "Aerosol Acqua 270ml",                          price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Acqua.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 46,  name: "Aerosol Ananá y Coco 270ml",                   price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Ananá y Coco.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 47,  name: "Aerosol Azahares 270ml",                       price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Azahares.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 48,  name: "Aerosol Burbujas de Jabón 270ml",              price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Burbujas de Jabón.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 49,  name: "Aerosol Citronella 270ml",                     price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Citronella.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 50,  name: "Aerosol Coco y Vainilla 270ml 🆕",             price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_CocoVainilla.png", description: "Aerosol 270ml — NUEVO", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 51,  name: "Aerosol Flor de Loto 270ml",                   price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Flor de Loto.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 52,  name: "Aerosol Flores Cítricas 270ml",                price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Flores Cítricas.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 53,  name: "Aerosol Frutas Tropicales 270ml",              price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Frutas Tropicales.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 54,  name: "Aerosol Glasé de Naranja 270ml",               price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Glasé de Naranja (1).png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 55,  name: "Aerosol Hoja de Higuera 270ml ⭐ PROMO",               price: 3944, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Hoja de Higuera.png", description: "Aerosol 270ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 56,  name: "Aerosol Limón Manzanilla 270ml 🆕",            price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LB_Aerosol270ml_LimonManzanilla.png", description: "Aerosol 270ml — NUEVO", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 57,  name: "Aerosol Maderas de Oriente 270ml",             price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Maderas de Oriente.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 58,  name: "Aerosol Marina 270ml",                         price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Marina (1).png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 59,  name: "Aerosol Naranja Pimienta 270ml",               price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Naranja y Pimienta.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 60,  name: "Aerosol Pistacho 270ml",                       price: 4640, stock: 10, image: "", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 61,  name: "Aerosol Pitanga 270ml",                        price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Pitanga (1).png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 62,  name: "Aerosol Suavechito 270ml",                     price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Suavechito.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 63,  name: "Aerosol Suavidad Floral 270ml",                price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Suavidad Floral.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 64,  name: "Aerosol Té Negro y Damasco 270ml ⭐ PROMO",             price: 3944, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Te Negro y Damasco.png", description: "Aerosol 270ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 65,  name: "Aerosol Uva 270ml",                            price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Uva.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 66,  name: "Aerosol Vainilla y Almendra 270ml ⭐ PROMO",            price: 3944, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Vainilla y Almendra.png", description: "Aerosol 270ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+                { id: 67,  name: "Aerosol Verbena 270ml",                        price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/AEROSOLES -LH/20240_SMA_Mockup_LH_Aerosol270ml_Verbena.png", description: "Aerosol 270ml", grupo: "Línea Hogar", subgrupo: "Aerosol 270ml" },
+
+                { id: 68,  name: "Difusor Aromático Ananá y Coco 130ml",         price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Anana y Coco.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 69,  name: "Difusor Aromático Citronella 130ml",           price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Citronella.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 70,  name: "Difusor Aromático Flor de Loto 130ml",         price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Flor de Loto.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 71,  name: "Difusor Aromático Flores Cítricas 130ml",      price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Flores Cítricas.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 72,  name: "Difusor Aromático Frutas Tropicales 130ml",    price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Frutas Tropicales.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 73,  name: "Difusor Aromático Glasé de Naranja 130ml",     price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Glasé de Naranja.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 74,  name: "Difusor Aromático Hoja de Higuera 130ml ⭐ PROMO",        price: 3855, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Hoja de Higuera.png", description: "Difusor Aromático 130ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 75,  name: "Difusor Aromático Maderas de Oriente 130ml",   price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Maderas de Oriente.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 76,  name: "Difusor Aromático Mandarina Dulce 130ml",      price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Mandarina Dulce.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 77,  name: "Difusor Aromático Melón y Mango 130ml",        price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Melón y Mango.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 78,  name: "Difusor Aromático Naranja Pimienta 130ml",     price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Naranja y Pimienta.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 79,  name: "Difusor Aromático Pistacho 130ml",             price: 4535, stock: 10, image: "", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 80,  name: "Difusor Aromático Suavechito 130ml",           price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Suavechito.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 81,  name: "Difusor Aromático Té Negro y Damasco 130ml ⭐ PROMO",     price: 3855, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Te negro y damasco.png", description: "Difusor Aromático 130ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 82,  name: "Difusor Aromático Vainilla y Almendra 130ml ⭐ PROMO",    price: 3855, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Vainilla y Almendra.png", description: "Difusor Aromático 130ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+                { id: 83,  name: "Difusor Aromático Verbena 130ml",              price: 4535, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/DIFUSORES/2024_SMA_Mockup_LH_Difusor130ml_Verbena.png", description: "Difusor Aromático 130ml", grupo: "Línea Hogar", subgrupo: "Difusor Aromático 130ml" },
+
+                { id: 84,  name: "Aceite Citronella 12ml",                       price: 2730, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/ACEITES/20240_SMA_Mockup_LH_Aceite12ml_Citronella.png", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 85,  name: "Aceite Glasé de Naranja 12ml",                 price: 2730, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/ACEITES/20240_SMA_Mockup_LH_Aceite12ml_Glasé de Naranja.png", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 86,  name: "Aceite Lavanda y Sándalo 12ml",                price: 2730, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/ACEITES/20240_SMA_Mockup_LH_Aceite12ml_Lavanda y Sandalo.png", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 87,  name: "Aceite Maderas de Oriente 12ml",               price: 2730, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/ACEITES/20240_SMA_Mockup_LH_Aceite12ml_Maderas de Oriente.png", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 88,  name: "Aceite Nag Champa 12ml",                       price: 2730, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/ACEITES/20240_SMA_Mockup_LH_Aceite12ml_Nag Champa.png", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 89,  name: "Aceite Vainilla y Almendra 12ml ⭐ PROMO",             price: 2321, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/ACEITES/20240_SMA_Mockup_LH_Aceite12ml_Vainilla y Almendra.png", description: "Aceite 12ml — PROMO 15% OFF hasta 07/05", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+                { id: 90,  name: "Aceite Verbena 12ml",                          price: 2730, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/ACEITES/20240_SMA_Mockup_LH_Aceite12ml_Verbena.png", description: "Aceite 12ml", grupo: "Línea Hogar", subgrupo: "Aceite 12ml" },
+
+                // LÍNEA BEBÉ — Aromatizador de Telas y Ambientes (500ml, sin gatillo)
+                { id: 91,  name: "Bebé Aromatizador Arrorró 500ml",              price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AROMATIZADORES - LB/2024_SMA_Etiquetas_Aromatizador500ml_LB_Maquetas_02_Arrorro_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 92,  name: "Bebé Aromatizador Babies 500ml",               price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AROMATIZADORES - LB/2024_SMA_Etiquetas_Aromatizador500ml_LB_Maquetas_02_Babies_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 93,  name: "Bebé Aromatizador Deditos 500ml",              price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AROMATIZADORES - LB/2024_SMA_Etiquetas_Aromatizador500ml_LB_Maquetas_02_Deditos_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 94,  name: "Bebé Aromatizador Lefrance 500ml",             price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AROMATIZADORES - LB/2024_SMA_Etiquetas_Aromatizador500ml_LB_Maquetas_02_Lefrance_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+                { id: 95,  name: "Bebé Aromatizador Mimitos 500ml",              price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AROMATIZADORES - LB/2024_SMA_Etiquetas_Aromatizador500ml_LB_Maquetas_02_Mimitos_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Bebé", subgrupo: "Aromatizador 500ml" },
+
+                { id: 96,  name: "Bebé Aerosol Arrorró 270ml 🆕",               price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AEROSOLES - LB/20240_SMA_Mockup_LB_Aerosol270ml_Arroro.png", description: "Aerosol 270ml — NUEVO", grupo: "Línea Bebé", subgrupo: "Aerosol 270ml" },
+                { id: 97,  name: "Bebé Aerosol Deditos 270ml",                   price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AEROSOLES - LB/20240_SMA_Mockup_LB_Aerosol270ml_Deditos.png", description: "Aerosol 270ml", grupo: "Línea Bebé", subgrupo: "Aerosol 270ml" },
+                { id: 98,  name: "Bebé Aerosol Lefrance 270ml",                  price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AEROSOLES - LB/20240_SMA_Mockup_LB_Aerosol270ml_Lefrance.png", description: "Aerosol 270ml", grupo: "Línea Bebé", subgrupo: "Aerosol 270ml" },
+
+                { id: 99,  name: "Bebé Agua de Colonia Arrorró 120ml",           price: 3860, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AGUA DE COLONIA/2024_SMA_Etiquetas_Colonias120ml_LB_Maquetas_02_Arrorró.png", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
+                { id: 100, name: "Bebé Agua de Colonia Deditos 120ml",           price: 3860, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AGUA DE COLONIA/2024_SMA_Etiquetas_Colonias120ml_LB_Maquetas_02_Deditos.png", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
+                { id: 101, name: "Bebé Agua de Colonia Lefrance 120ml",          price: 3860, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AGUA DE COLONIA/2024_SMA_Etiquetas_Colonias120ml_LB_Maquetas_02_Lefrance.png", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
+                { id: 102, name: "Bebé Agua de Colonia Mimitos 120ml",           price: 3860, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA BEBÉ/AGUA DE COLONIA/2024_SMA_Etiquetas_Colonias120ml_LB_Maquetas_02_Mimitos.png", description: "Agua de Colonia 120ml", grupo: "Línea Bebé", subgrupo: "Agua de Colonia 120ml" },
+
+                // LÍNEA INFANTIL — Aromatizador de Telas y Ambientes (120ml)
+                { id: 103, name: "Infantil Aromatizador Cositas 120ml",          price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AROMATIZADORES -LI/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LI_Maquetas_02_Cositas.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 120ml" },
+                { id: 104, name: "Infantil Aromatizador Sueñitos 120ml",         price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AROMATIZADORES -LI/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LI_Maquetas_02_Sueñitos.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 120ml" },
+                { id: 105, name: "Infantil Aromatizador Nubecitas 120ml",        price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AROMATIZADORES -LI/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LI_Maquetas_02_Nubecitas.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 120ml" },
+
+                { id: 106, name: "Infantil Aromatizador Basquet 500ml",          price: 6780, stock: 10, image: "", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 107, name: "Infantil Aromatizador Cositas 500ml",          price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AROMATIZADORES -LI/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LI_Maquetas_02_Cositas_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 108, name: "Infantil Aromatizador Mujercitas 500ml",       price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AROMATIZADORES -LI/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LI_Maquetas_02_Mujercitas_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 109, name: "Infantil Aromatizador Nubecitas 500ml",        price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AROMATIZADORES -LI/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LI_Maquetas_02_Nubecitas_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+                { id: 110, name: "Infantil Aromatizador Sueñitos 500ml",         price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AROMATIZADORES -LI/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LI_Maquetas_02_Sueñitos_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Infantil", subgrupo: "Aromatizador 500ml" },
+
+                { id: 111, name: "Infantil Aerosol Mujercitas 270ml 🆕",         price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AEROSOLES -LI/20240_SMA_Mockup_LI_Aerosol270ml_Mujercitas.png", description: "Aerosol 270ml — NUEVO", grupo: "Línea Infantil", subgrupo: "Aerosol 270ml" },
+                { id: 112, name: "Infantil Aerosol Nubecitas 270ml",             price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AEROSOLES -LI/20240_SMA_Mockup_LI_Aerosol270ml_Nubecitas.png", description: "Aerosol 270ml", grupo: "Línea Infantil", subgrupo: "Aerosol 270ml" },
+                { id: 113, name: "Infantil Aerosol Sueñitos 270ml",              price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/AEROSOLES -LI/20240_SMA_Mockup_LI_Aerosol270ml_Sueñitos.png", description: "Aerosol 270ml", grupo: "Línea Infantil", subgrupo: "Aerosol 270ml" },
+
+                { id: 114, name: "Infantil Colonia Basquet 120ml",               price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/COLONIA INFANTIL/2024_SMA_Etiquetas_Colonias120ml_LI_Maquetas_02_Basquet.png", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 115, name: "Infantil Colonia Mujercitas 120ml",            price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/COLONIA INFANTIL/2024_SMA_Etiquetas_Colonias120ml_LI_Maquetas_02_Mujercitas.png", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 116, name: "Infantil Colonia Nubecitas 120ml",             price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/COLONIA INFANTIL/2024_SMA_Etiquetas_Colonias120ml_LI_Maquetas_02_Nubecitas.png", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 117, name: "Infantil Colonia Sueñitos 120ml",              price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA INFANTIL/COLONIA INFANTIL/2024_SMA_Etiquetas_Colonias120ml_LI_Maquetas_02_Sueñitos.png", description: "Colonia 120ml", grupo: "Línea Infantil", subgrupo: "Colonia 120ml" },
+                { id: 118, name: "Jabón Líquido Açai 300ml 🆕",                 price: 5495, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA CUERPO/SMA_Etiqueta_LineaCuerpo_JabonLiquido_Acai.png", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 119, name: "Jabón Líquido Fresa 300ml 🆕",                price: 5495, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA CUERPO/SMA_Etiqueta_LineaCuerpo_JabonLiquido_Fresa.png", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 120, name: "Jabón Líquido Lima 300ml 🆕",                 price: 5495, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA CUERPO/SMA_Etiqueta_LineaCuerpo_JabonLiquido_Lima.png", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 121, name: "Jabón Líquido Piña 300ml 🆕",                 price: 5495, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA CUERPO/SMA_Etiqueta_LineaCuerpo_JabonLiquido_PIÑA.png", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+                { id: 122, name: "Jabón Líquido Pomelo 300ml 🆕",               price: 5495, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA CUERPO/SMA_Etiqueta_LineaCuerpo_JabonLiquido_Pomelo.png", description: "Jabón Líquido 300ml — NUEVO", grupo: "Línea Cuerpo", subgrupo: "Jabón Líquido 300ml" },
+
+                // LÍNEA PERFUME — Perfume Personal Femenino (50ml)
+                { id: 123, name: "Perfume 01F_212 50ml",                         price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_01F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 124, name: "Perfume 16F_Flow 50ml",                        price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_16F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 125, name: "Perfume 18F_Hall 50ml",                        price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_18F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 126, name: "Perfume 22F_LadyMillion 50ml",                 price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_22F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 127, name: "Perfume 30F_Honor & Glory 50ml",               price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_30F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 128, name: "Perfume 40F_Nina 50ml",                        price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_40F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 129, name: "Perfume 50F_Yara 50ml",                        price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_50F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 130, name: "Perfume 54F_Bacarat 50ml",                     price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_54F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 131, name: "Perfume 65F_LaVie 50ml",                       price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_65F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 132, name: "Perfume 66F_Si 50ml",                          price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_66F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 133, name: "Perfume 67F_Olymp 50ml",                       price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_67F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 134, name: "Perfume 69F_Good Girl 50ml",                   price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_69F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 135, name: "Perfume 72F_Pure 50ml",                        price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_72F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 136, name: "Perfume 77F_MWay 50ml",                        price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_77F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 137, name: "Perfume 78F_Cher 50ml",                        price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 138, name: "Perfume 79F_Libre 50ml",                       price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_79F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 139, name: "Perfume 80F_Idole 50ml",                       price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_80F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 140, name: "Perfume 81F_Si Passion 50ml",                  price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_81F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 141, name: "Perfume 82F_Olymp Solar 50ml",                 price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_82F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 142, name: "Perfume 83F_212 Forever 50ml",                 price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_83F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 143, name: "Perfume 85F_Amor Amor 50ml",                   price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_85F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 144, name: "Perfume 87F_Scandal 50ml",                     price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_87F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 145, name: "Perfume 90F_L-Blue 50ml",                      price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_90F.png", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 146, name: "Perfume 92F_Divine 50ml",                      price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+                { id: 147, name: "Perfume 95F_Angel Nova 50ml",                  price: 15100, stock: 10, image: "", description: "Perfume Femenino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Femenino 50ml" },
+
+                { id: 148, name: "Perfume 01M_212 50ml",                         price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_01M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 149, name: "Perfume 10M_HBoss 50ml",                       price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_10M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 150, name: "Perfume 20M_Oud Glory 50ml",                   price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_20F.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 151, name: "Perfume 31M_OMillion 50ml",                    price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_31M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 152, name: "Perfume 45M_Invict 50ml",                      price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_45M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 153, name: "Perfume 48M_Sauvage 50ml",                     price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_48M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 154, name: "Perfume 50M_Bboy 50ml",                        price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_50M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 155, name: "Perfume 51M_Hero212 50ml",                     price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_51M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 156, name: "Perfume 52M_Invict Onyx 50ml",                 price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_52M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 157, name: "Perfume 55M_Phantom 50ml",                     price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_55M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 158, name: "Perfume 57M_Scandal 50ml",                     price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 159, name: "Perfume 60M_Wanted 50ml",                      price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_60M.png", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+                { id: 160, name: "Perfume 62M_Sauvage Elixir 50ml",              price: 15100, stock: 10, image: "", description: "Perfume Masculino 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Masculino 50ml" },
+
+                { id: 161, name: "Perfume 05_One 50ml",                          price: 15100, stock: 10, image: "", description: "Perfume Unisex 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Unisex 50ml" },
+                { id: 162, name: "Perfume 12_Erba Pura 50ml",                    price: 15100, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/CAJAS PERFUMES/20240_SMA_Mockup_LP_Caja_12U.png", description: "Perfume Unisex 50ml", grupo: "Línea Perfume", subgrupo: "Perfume Unisex 50ml" },
+
+                { id: 163, name: "Arom. Perfume 01F_212 120ml",                  price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_01F.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 164, name: "Arom. Perfume 05_One 120ml",                   price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_05U.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 165, name: "Arom. Perfume 31M_Million 120ml",              price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_31M.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 166, name: "Arom. Perfume 45M_Invic 120ml",                price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_45M.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 167, name: "Arom. Perfume 48M_Sauvage 120ml",              price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_48M.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 168, name: "Arom. Perfume 60M_Wanted 120ml",               price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_60M.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 169, name: "Arom. Perfume 65F_LaVie 120ml",                price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_65F.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 170, name: "Arom. Perfume 67F_Olymp 120ml",                price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_67F.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 171, name: "Arom. Perfume 78F_Cher 120ml",                 price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_78F.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+                { id: 172, name: "Arom. Perfume 81F_SiPassion 120ml",            price: 2600, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LP_Maquetas_81F.png", description: "Aromatizador de Telas y Ambientes 120ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 120ml" },
+
+                { id: 173, name: "Arom. Perfume 01F_212 500ml",                  price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_01F_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 174, name: "Arom. Perfume 05_One 500ml",                   price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_05U_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 175, name: "Arom. Perfume 31M_Million 500ml",              price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_31M_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 176, name: "Arom. Perfume 45M_Invic 500ml",                price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_45M_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 177, name: "Arom. Perfume 48M_Sauvage 500ml",              price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_48M_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 178, name: "Arom. Perfume 60M_Wanted 500ml",               price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_60M_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 179, name: "Arom. Perfume 65F_LaVie 500ml",                price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_65F_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 180, name: "Arom. Perfume 67F_Olymp 500ml",                price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_67F_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 181, name: "Arom. Perfume 78F_Cher 500ml",                 price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_78F_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+                { id: 182, name: "Arom. Perfume 81F_SiPassion 500ml",            price: 6780, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AROMATIZADORES/500ML/2024_SMA_Etiquetas_Aromatizador500ml_LP_Maquetas_81F_TAPA.png", description: "Aromatizador de Telas y Ambientes 500ml", grupo: "Línea Perfume", subgrupo: "Aromatizador 500ml" },
+
+                { id: 183, name: "Aerosol Perfume 78F_Cher 270ml",               price: 4640, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA PERFUME/AEROSOL - LP/2025_SMA_Mockup_Lp_Aerosol270ml_78F (1).png", description: "Aerosol 270ml", grupo: "Línea Perfume", subgrupo: "Aerosol 270ml" },
+
+                { id: 184, name: "Difusor Auto Acqua Car 10ml",                  price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Acqua Car.png", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 185, name: "Difusor Auto Candy 10ml 🆕",                   price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Candy.png", description: "Difusor para Auto 10ml — NUEVO", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 186, name: "Difusor Auto Glasé de Naranja 10ml",           price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Glasé de Naranja.png", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 187, name: "Difusor Auto Maderas de Oriente 10ml",         price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Maderas de Oriente.png", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 188, name: "Difusor Auto Manzana Verde 10ml",              price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Manzana Verde.png", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 189, name: "Difusor Auto Piña Caribe 10ml",                price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Piña Caribe.png", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 190, name: "Difusor Auto Polo Grey 10ml 🆕",               price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_PG.png", description: "Difusor para Auto 10ml — NUEVO", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 191, name: "Difusor Auto Lavanda 10ml",                    price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Lavanda.png", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+                { id: 192, name: "Difusor Auto Verbena 10ml",                    price: 4480, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/DIFUSOR PARA AUTO/2024_SMA_Etiquetas_Difusor para auto 10ml_LA_Maquetas_02_Verbena.png", description: "Difusor para Auto 10ml", grupo: "Línea Auto", subgrupo: "Difusor para Auto 10ml" },
+
+                { id: 193, name: "Aromatizador Auto Acqua Car 120ml",            price: 2270, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LA_Maquetas_01_acqua car.png", description: "Aromatizador para Auto 120ml", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 194, name: "Aromatizador Auto Candy 120ml 🆕",             price: 2270, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LA_Maquetas_Candy.png", description: "Aromatizador para Auto 120ml — NUEVO", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 195, name: "Aromatizador Auto Manzana Verde 120ml",        price: 2270, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LA_Maquetas_manzanaverde.png", description: "Aromatizador para Auto 120ml", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 196, name: "Aromatizador Auto Piña Caribe 120ml",          price: 2270, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LA_Maquetas_piñacaribe.png", description: "Aromatizador para Auto 120ml", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+                { id: 197, name: "Aromatizador Auto Polo Grey 120ml 🆕",         price: 2270, stock: 10, image: "FOTOS PRODUCTOS SM/LÍNEA PARA AUTOS/120ML/2024_SMA_Etiquetas_Aromatizador120ml_LA_Maquetas_PG.png", description: "Aromatizador para Auto 120ml — NUEVO", grupo: "Línea Auto", subgrupo: "Aromatizador para Auto 120ml" },
+
+                { id: 198, name: "Alcohol en Gel Acqua 500ml",                   price: 2010, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA SALUD/V0030002-0026-0500_Alcohol_en_Gel_Acqua_500_ml-01.jpg", description: "Alcohol en Gel 500ml", grupo: "Línea Salud", subgrupo: "Alcohol en Gel" },
+
+                { id: 199, name: "Home Spray Gardenia & Flores Blancas 250ml",   price: 4675, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/HOME SPRAY/GARDENIA & FLORES BLANCAS -  250ML.png", description: "Home Spray 250ml", grupo: "Otros Productos", subgrupo: "Home Spray" },
+                { id: 200, name: "Home Spray Orquídea & Flor de Loto 250ml",     price: 4675, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/HOME SPRAY/ORQUIDEA & FLOR DE LOTO - 250ML.png", description: "Home Spray 250ml", grupo: "Otros Productos", subgrupo: "Home Spray" },
+                { id: 201, name: "Home Spray Amapola & Rosas 250ml",             price: 4675, stock: 10, image: "FOTOS PRODUCTOS SM/LINEA HOGAR/HOME SPRAY/AMAPOLA & ROSAS - 250ML.png", description: "Home Spray 250ml", grupo: "Otros Productos", subgrupo: "Home Spray" },
+
+                { id: 202, name: "Ambientador Analógico",                        price: 17050, stock: 10, image: "", description: "Accesorio", grupo: "Otros Productos", subgrupo: "Accesorios" },
+                { id: 203, name: "Ambientador Analógico 220V",                   price: 20770, stock: 10, image: "", description: "Accesorio", grupo: "Otros Productos", subgrupo: "Accesorios" },
+                { id: 204, name: "Cubo Difusor",                                 price: 4050,  stock: 10, image: "FOTOS PRODUCTOS SM/COMPLEMENTOS/Cubo difusor_con varillas.png", description: "Accesorio", grupo: "Otros Productos", subgrupo: "Accesorios" },
+
+                { id: 205, name: "Bomba Cremera",                                price: 1030,  stock: 10, image: "", description: "Complemento", grupo: "Otros Productos", subgrupo: "Complementos" },
+                { id: 206, name: "Gatillo",                                      price: 750,   stock: 10, image: "", description: "Complemento", grupo: "Otros Productos", subgrupo: "Complementos" },
+            ]);
+
+            // Estado de Usuarios
+            const [usuarios] = useState([
+                { id: "u1", nombre: "MIMI", email: "Eliana", tipo: "revendedor" },
+                { id: "u2", nombre: "Revendedor", email: "revendedor@ejemplo.com", tipo: "revendedor" }
+            ]);
+
+            // ── PRODUCTOS SAPHIRUS ────────────────────────────────────────────
+            const FRUTAS_S = ['Apple','Bubblegum','Ciruela','Coco Vainilla','Coco Maracuyá','Damasco','Frutilla','Guaraná','Hawai','Maracuyá','Mango','Melón','Papaya','Peras y Duraznos','Peras y Flores','Pitanga','Sandía Pepino','Tropical','Uva'];
+            const FLORALES_S = ['Bamboo','Bergamota y Naranja','Bouquet floral','Breeze','Citronella','Clean Cotton','Duvet','Flores Blancas','Jazmín','Lavanda','Lavanda y Té Verde','Lola','Magnolias y Fresias','Mix Tropical','Palo Santo','Peonías y Cedro','Rocío','Rosas','Tilo','Vainilla','Violetas'];
+            const PERFUMADOS_S = ['Amour','Ángel','Antitabaco','Apolo','Bebé','Blue','Cony','Cristóbal','Daniel','Etiqueta Negra','Faren','Flowers','Indiana','Invicto','Lady','Mery','Mito','New York','Nina','Olympic','One Million','Palace','Patio','Paula','Tokio','Wanted'];
+            const CITRICOS_S = ['Citrus','Fantasía','Limón','Limón Dulce y Vainilla','Linah','London','Mandarina','Marino','Miel y Limón','Orange','Pomelo Rosado','Verbena'];
+            const GOURMAND_S = ['Café au Chocolat','Capuccino','Green','Manzana Canela','Naranja Pimienta','Naranja Chocolate','Vainilla Tonka'];
+            const ALL_FRAGANCIAS_S = [...FRUTAS_S,...FLORALES_S,...PERFUMADOS_S,...CITRICOS_S,...GOURMAND_S,'Oriente'].sort();
+            const TEXTIL_FRAGANCIAS_S = ['Adventure','Amour','Angel','Antitabaco','Apple','Bad Man','Bamboo','Beauty','Bebé','Bella','Bergamota y Cedro','Black','Blue','Breeze','Bubblegum','Cereza Malbec','Citrus','Coco Vainilla','Cony','Cristóbal','Daniel','Duvet','Erba','Etiqueta Negra','Fama','Faren','Flores Blancas','Flowers','Frutilla','Green','Hawai','Indiana','Invicto','Jazmín','Lady','Lavanda','Limón','Linah','Lola','Magnolias y Fresias','Mery','Nina','New York','Olympic','One Million','Oriente','Palace','Papaya','Patio','Peonías y Cedro','Pitanga','Rocío','Rosas','Tropical','Uva','Vainilla','Verbena','Violetas','Wanted'].sort();
+            const DIFUSOR_FRAGANCIAS_S = ['Adventure','Amour','Apple','Bad Man','Bamboo','Bebé','Bergamota y Cedro','Café au Chocolat','Capuccino','Citronella','Citrus','Clean Cotton','Coco Vainilla','Cony','Flores Blancas','Flowers','Guaraná','Hawai','Indiana','Invicto','Jazmín','Lavanda','Limón','Linah','Lola','London','Magnolias y Fresias','Mango','Maracuyá','Marino','Melón','Mery','Miel y Limón','Nina','Orange','Oriente','Palo Santo','Papaya','Patio','Paula','Peras y Duraznos','Rocío','Tropical','Uva','Vainilla','Vainilla Tonka','Verbena','Violetas','Wanted'].sort();
+            const HOME_FRAGANCIAS_S = ['Amour','Angel','Antitabaco','Bamboo','Bebé','Bella','Bubblegum','Citrus','Clean Cotton','Coco Vainilla','Cony','Flores Blancas','Flowers','Hawai','Invicto','Lavanda','Linah','Lola','Magnolias y Fresias','Marino','Mery','Olympic','One Million','Oriente','Paula','Rocío','Tropical','Uva','Vainilla','Verbena','Wanted'].sort();
+            const MINI_FRAGANCIAS_S = ['Amour','Angel','Antitabaco','Bad Man','Bamboo','Bebé','Bella','Bubblegum','Citrus','Coco Vainilla','Cony','Flowers','Green','Hawai','Invicto','Lavanda','Limón','Linah','Lola','Magnolias y Fresias','Marino','Mery','Olympic','One Million','Oriente','Papaya','Paula','Pitanga','Rocío','Tropical','Uva','Vainilla','Verbena','Wanted'].sort();
+            const ACEITE_FRAGANCIAS_S = ['Bamboo','Bergamota','Cedro','Citronella','Coco Vainilla','Eucaliptus','Flores Blancas','Frankincense','Jazmín','Lavanda','Limón','Linah','Manzana Canela','Menta','Miel y Limón','Nag Champa','Naranja Pimienta','Orange','Oriente','Palo Santo','Papaya','Patchouly','Rosas','Sándalo','Vainilla','Verbena'].sort();
+            const TOUCH_FRAGANCIAS_S = ['Agua Marina','Frutos Rojos','Lavanda Fresh','Mix Cítrico','Pétalos Florales','Dulzura Tropical'];
+            const PARFUM_FRAGANCIAS_S = ['212 NYC','Bad Man','C Water','CH Man','CK One','Divina','Fama','Faren','Flowers','Good Woman','Indiana','Invicto','J Adore','Lady','Male','Mito','N°5','Nova','Olympic','One Million','Opium','Polo','Salvaje','Scandal Fem','Scandal Man','Si','Vida Bella','Wanted','Y'].sort();
+            const GEL_FRAGANCIAS_S = ['Aqua Rosé','Bosque de Pino','Brisa Marina','Cítrico','Citronella','Floral','Lavanda','Manzana Canela','Orange','Vainilla'];
+            const ROUTE66_FRAGANCIAS_S = ['Cítrico','Frutos Rojos','Manzana','Marino','Naranja','Tropical','Tutti Frutti','Uva'];
+            const CARITAS_FRAGANCIAS_S = ['Aqcua','Caribe','Lima Limón','Manzana','Multifruta','Naranja','Sport'];
+            const LATITA_FRAGANCIAS_S = ['Bamboo','Coco','Flores Blancas','Lavanda','Limón','Manzana Verde','Rocío','Uva'];
+            const SENSACIONES_FRAGANCIAS_S = ['Bosque de Pino','Brisa Marina','Cítrico','Lavanda'];
+            const AMBAR_AEROSOL_S = ['Amour','Antitabaco','Bamboo','Bebé','Bubblegum','Coco y Vainilla','Cony','Citrus','Daniel','Flores Blancas','Flowers','Hawai','Indiana','Invicto','Jazmín','Lavanda','Limón','Linah','Lola','Magnolias y Fresias','Mery','Orange','Papaya','Patio','Rocío','Tokio','Tropical','Uva','Vainilla'].sort();
+            const AMBAR_TEXTIL_S = ['Amour','Angel','Bamboo','Bebé','Bella','Bubblegum','Coco y Vainilla','Cony','Fama','Flores Blancas','Flowers','Green','Hawai','Invicto','Jazmín','Lady','Lavanda','Limón','Linah','Lola','Magnolias y Fresias','Mery','Nina','Olympic','One Million','Opium','Papaya','Paula','Rocío','Tropical','Uva','Vainilla','Wanted'].sort();
+
+            const fmtFragancias = (arr) => arr && arr.length > 0 ? arr.join(' · ') : '';
+
+            const productosSaphirus = [
+              // AEROSOLES
+              { id:'s1', name:'Aerosol Aromatizante', price:4258, image:'', description:`Cont. 185 gr / 280 cc. Apto para aparatos. Pack: 12 uds.\nFragancias: ${fmtFragancias(ALL_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Aerosol Aromatizante', icon:'🌬️' },
+              // TEXTIL
+              { id:'s2', name:'Perfume Textil 250ml', price:2943, image:'', description:`Cont. 250 ml. Ideal para ropa y ambientes. Pack: 12 uds.\nFragancias: ${fmtFragancias(TEXTIL_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Perfume Textil', icon:'👕' },
+              // DIFUSOR
+              { id:'s3', name:'Difusor Aromático 125ml', price:4169, image:'', description:`Cont. 125 ml. Con varillas difusoras. Pack: 12 uds.\nFragancias: ${fmtFragancias(DIFUSOR_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Difusor Aromático', icon:'🪄' },
+              // HOME SPRAY
+              { id:'s4', name:'Home Spray 500ml', price:5885, image:'', description:`Cont. 500 ml. Para closet, telas y ambientes. Pack: 6 uds.\nFragancias: ${fmtFragancias(HOME_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Home Spray', icon:'💦' },
+              // MINI
+              { id:'s5', name:'Mini Concentrado 60ml', price:2193, image:'', description:`Cont. 60 ml. Fórmula concentrada para cartera. Pack: 24 uds.\nFragancias: ${fmtFragancias(MINI_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Mini Concentrado', icon:'✨' },
+              // TOUCH
+              { id:'s6', name:'Touch + Repuesto 500ml', price:3628, image:'', description:`Cont. 500 ml. Dispensador automático + repuesto. Pack: 12 uds.\nFragancias: ${fmtFragancias(TOUCH_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Touch & Repuesto', icon:'🤖' },
+              { id:'s7', name:'Repuesto Touch 500ml', price:2256, image:'', description:`Cont. 500 ml. Repuesto para dispensadores Touch. Pack: 12 uds.\nFragancias: ${fmtFragancias(TOUCH_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Touch & Repuesto', icon:'🔄' },
+              // GEL
+              { id:'s8', name:'Gel Sensaciones 8gr', price:3239, image:'', description:`Cont. 8 gr. Gel aromatizante para espacios pequeños. Pack: 12 uds.\nFragancias: ${fmtFragancias(GEL_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Gel & Sensaciones', icon:'💎' },
+              { id:'s9', name:'Sensaciones + Holder 8gr', price:6607, image:'', description:`Cont. 8 gr + soporte plástico decorativo. Pack: 12 uds.\nFragancias: ${fmtFragancias(SENSACIONES_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Gel & Sensaciones', icon:'🎋' },
+              // TARJETAS
+              { id:'s10', name:'Tarjetas Aromáticas 3 uds', price:5111, image:'', description:`Cont. 34 gr · 3 uds. Para closet y valija. Pack: 12 uds.\nFragancias: Frutos Tropicales · Lavanda y Manzanilla · Lima y Menta · Magnolia y Vainilla · Rosas y Neroli`, grupo:'Aromas & Hogar', subgrupo:'Tarjetas & Latitas', icon:'🃏' },
+              // LATITA
+              { id:'s13', name:'Latita Aromatizante 80gr', price:6607, image:'', description:`Cont. 80 gr sólido. Ideal para espacios pequeños. Pack: 12 uds.\nFragancias: ${fmtFragancias(LATITA_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Tarjetas & Latitas', icon:'🥫' },
+              // VELAS
+              { id:'s14', name:'Velas de Noche x10', price:1651, image:'', description:`Cont. 10 uds. Con vaso contenedor. Para hornillos. Pack: 12 uds.`, grupo:'Aromas & Hogar', subgrupo:'Aceites & Velas', icon:'🕯️' },
+              // ACEITES
+              { id:'s15', name:'Aceite Esencial 10ml', price:2577, image:'', description:`Cont. 10 ml. Para hornillos. Ambientes y hogar. Pack: 24 uds.\nFragancias: ${fmtFragancias(ACEITE_FRAGANCIAS_S)}`, grupo:'Aromas & Hogar', subgrupo:'Aceites & Velas', icon:'🌿' },
+              // SAHUMERIOS
+              { id:'s16', name:'Sahumerios Masala 15gr', price:1049, image:'', description:`Cont. 15 gr. Línea Masala, calma y bienestar. Pack: 12 uds.\nFragancias: Cinnamon · Frankincense · Musk · Nag Champa · Palo Santo · Patchouli`, grupo:'Aromas & Hogar', subgrupo:'Sahumerios', icon:'🪷' },
+              { id:'s17', name:'Sahumerios Himalaya 6 varillas', price:1779, image:'', description:`Cont. 210 gr · 6 varillas. Calma & bienestar. Pack: 60 uds.\nFragancias: Bamboo · Coco Vainilla · Flores Blancas · Lavanda · Limón · Linah · Rocío · Uva`, grupo:'Aromas & Hogar', subgrupo:'Sahumerios', icon:'🏔️' },
+              { id:'s18', name:'Sahumerios Hierbas 6 varillas', price:1568, image:'', description:`Cont. 155 gr · 6 varillas. Calma & bienestar. Pack: 60 uds.\nFragancias: Gardenia y Caléndula · Jazmín y Rosas · Lavanda y Rosas · Magnolias · Palo Santo y Sándalo · Rosas`, grupo:'Aromas & Hogar', subgrupo:'Sahumerios', icon:'🌱' },
+              // HORNILLOS
+              { id:'s23', name:'Hornillo Cerámica Chico 9cm', price:4515, image:'', description:`Color marfil. Medida: 9 cm. Para aceites y velas de noche. Pack: 10 uds. Cód. 8200.`, grupo:'Aromas & Hogar', subgrupo:'Hornillos', icon:'🏺' },
+              { id:'s24', name:'Hornillo Cerámica Grande 12cm', price:5796, image:'', description:`Color marfil. Medida: 12 cm. Para aceites y velas de noche. Pack: 10 uds. Cód. 8201.`, grupo:'Aromas & Hogar', subgrupo:'Hornillos', icon:'🏺' },
+              { id:'s25', name:'Hornillo Cerámica Chico Arena 9cm', price:4515, image:'', description:`Color arena. Medida: 9 cm. Para aceites y velas de noche. Pack: 10 uds. Cód. 1461.`, grupo:'Aromas & Hogar', subgrupo:'Hornillos', icon:'🏺' },
+              { id:'s26', name:'Hornillo Cerámica Grande Arena 12cm', price:5796, image:'', description:`Color arena. Medida: 12 cm. Para aceites y velas de noche. Pack: 10 uds. Cód. 8202.`, grupo:'Aromas & Hogar', subgrupo:'Hornillos', icon:'🏺' },
+              // AUTO
+              { id:'s11', name:'Route 66 – Auto 2×7gr', price:2597, image:'', description:`Cont. 2 × 7 gr. Aromatizante para auto. Pack: 24 uds.\nFragancias: ${fmtFragancias(ROUTE66_FRAGANCIAS_S)}`, grupo:'Auto', subgrupo:'Auto', icon:'🚗' },
+              { id:'s12', name:'Caritas Aromáticas – Auto 2×2,8gr', price:2597, image:'', description:`Cont. 2 × 2,8 gr. Aromatizante divertido para auto. Pack: 24 uds.\nFragancias: ${fmtFragancias(CARITAS_FRAGANCIAS_S)}`, grupo:'Auto', subgrupo:'Auto', icon:'😊' },
+              // SANITIZANTES
+              { id:'s19', name:'Sanitizante 60ml', price:1454, image:'', description:`Cont. 60 ml. Para manos y piel. Cód. 5423. Pack: 24 uds.`, grupo:'Salud & Limpieza', subgrupo:'Sanitizantes', icon:'🧴' },
+              { id:'s20', name:'Sanitizante 250ml', price:2325, image:'', description:`Cont. 250 ml. Para manos y piel. Cód. 5424. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Sanitizantes', icon:'🧴' },
+              { id:'s21', name:'Sanitizante 500ml', price:3279, image:'', description:`Cont. 500 ml. Para manos y piel. Cód. 5426. Pack: 6 uds.`, grupo:'Salud & Limpieza', subgrupo:'Sanitizantes', icon:'🧴' },
+              // REPELENTES
+              { id:'s46', name:'Red On Spray Mini 15% DEET 60ml', price:1545, image:'', description:`Cont. 60 ml. 15% DEET. 6 hs de protección. Pack: 24 uds.`, grupo:'Salud & Limpieza', subgrupo:'Repelentes Red On', icon:'🦟' },
+              { id:'s47', name:'Red On Spray 200ml 15% DEET', price:3094, image:'', description:`Cont. 200 ml. 15% DEET. 6 hs de protección. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Repelentes Red On', icon:'🦟' },
+              { id:'s48', name:'Red On Aerosol 170cm³ 15% DEET', price:2482, image:'', description:`Cont. 170 cm³. 15% DEET. 6 hs de protección. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Repelentes Red On', icon:'🦟' },
+              { id:'s49', name:'Red On Spray Mini 25% DEET 60ml', price:1722, image:'', description:`Cont. 60 ml. 25% DEET. 12 hs de protección. Pack: 24 uds.`, grupo:'Salud & Limpieza', subgrupo:'Repelentes Red On', icon:'🦟' },
+              { id:'s50', name:'Red On Spray 25% DEET 12hs', price:3871, image:'', description:`Cont. 60 ml. 25% DEET. 12 hs de protección. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Repelentes Red On', icon:'🦟' },
+              { id:'s51', name:'Red On Aerosol 25% DEET 12hs', price:3488, image:'', description:`Cont. 170 cm³. 25% DEET. 12 hs de protección. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Repelentes Red On', icon:'🦟' },
+              // LIMPIEZA SHINY
+              { id:'s42', name:'Limpiador Multisuperficies 250ml', price:1389, image:'', description:`Cont. 250 ml. Para pisos brillantes. Pack: 12 uds.\nFragancias: Bamboo · Bebé · Frutos rojos · Lavanda · Marina · Mix Cítrico · Pétalos florales · Tropical`, grupo:'Salud & Limpieza', subgrupo:'Limpieza Shiny', icon:'🧹' },
+              { id:'s43', name:'Lustramueble Aerosol 360ml', price:3669, image:'', description:`Cont. 360 ml. Fragancia original. Cód. 1248. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Limpieza Shiny', icon:'✨' },
+              { id:'s44', name:'Desengrasante 500ml', price:2296, image:'', description:`Cont. 500 ml. Para cocinas. Cód. 23. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Limpieza Shiny', icon:'🍳' },
+              { id:'s45', name:'Limpiavidrios 500ml', price:2296, image:'', description:`Cont. 500 ml. Limpia sin dejar vetas. Cód. 24. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Limpieza Shiny', icon:'🪟' },
+              // ANTIHUMEDAD
+              { id:'s38', name:'Antihumedad 145gr', price:3464, image:'', description:`Cont. 145 gr. Antiderrame. Cód. 1256. Pack: 48 uds.`, grupo:'Salud & Limpieza', subgrupo:'Antihumedad', icon:'💧' },
+              { id:'s39', name:'Antihumedad 285gr', price:5312, image:'', description:`Cont. 285 gr. Antiderrame. Cód. 5429. Pack: 24 uds.`, grupo:'Salud & Limpieza', subgrupo:'Antihumedad', icon:'💧' },
+              { id:'s40', name:'Antihumedad 385gr', price:6927, image:'', description:`Cont. 385 gr. Antiderrame. Cód. 1259. Pack: 24 uds.`, grupo:'Salud & Limpieza', subgrupo:'Antihumedad', icon:'💧' },
+              { id:'s41', name:'Antihumedad Percha 250gr', price:5312, image:'', description:`Cont. 250 gr. Formato percha para colgar. Cód. 1255. Pack: 12 uds.`, grupo:'Salud & Limpieza', subgrupo:'Antihumedad', icon:'🪝' },
+              // PARFUM
+              { id:'s22', name:'Parfum Mini 60ml', price:4511, image:'', description:`Cont. 60 ml. Fragancia concentrada. Alta duración. Pack: 24 uds.\nFragancias: ${fmtFragancias(PARFUM_FRAGANCIAS_S)}`, grupo:'Perfumería', subgrupo:'Parfum Mini', icon:'🧪' },
+              // EQUIPOS
+              { id:'s27', name:'Equipo Aromatizador NBLCT-09', price:9593, image:'', description:`Analógico con toque lateral. 8×21 cm. Cód. 8093.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'⚙️' },
+              { id:'s28', name:'Equipo Aromatizador NBLCT-07', price:15083, image:'', description:`Analógico con toque Saphirus. 8×21 cm. Cód. 8090.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'⚙️' },
+              { id:'s29', name:'Equipo Aromatizador NBLCT-04 LCD', price:21575, image:'', description:`Analógico digital LCD. 8×21 cm. Cód. 1225.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'⚙️' },
+              { id:'s30', name:'Equipo Deco – Blanco', price:10084, image:'', description:`Línea Deco, color blanco. 9×21 cm. Cód. 8100.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'🤍' },
+              { id:'s31', name:'Equipo Deco – Negro', price:10630, image:'', description:`Línea Deco, color negro. 9×21 cm. Cód. 8102.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'🖤' },
+              { id:'s32', name:'Equipo Deco – Arena', price:10630, image:'', description:`Línea Deco, color arena. 9×21 cm. Cód. 8101.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'🏖️' },
+              { id:'s33', name:'Equipo Deco – Rojo', price:10630, image:'', description:`Línea Deco, color rojo. 9×21 cm. Cód. 8103.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'❤️' },
+              { id:'s34', name:'Equipo Deco – Rosa', price:10630, image:'', description:`Línea Deco, color rosa. 9×21 cm. Cód. 3136.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'🩷' },
+              { id:'s35', name:'Equipo Deco – Gris', price:10630, image:'', description:`Línea Deco, color gris. 9×21 cm. Cód. 8104.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'🩶' },
+              { id:'s36', name:'Pack Premium Deco (c/estuche)', price:16227, image:'', description:`Aromatizador Deco + Aerosol Saphirus + estuche. Fragancia y color a elección.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'🎁' },
+              { id:'s37', name:'Pack Premium Analógico (c/estuche)', price:15226, image:'', description:`Aromatizador Analógico + Aerosol Saphirus + estuche. Fragancia a elección.`, grupo:'Equipos', subgrupo:'Aromatizadores Electrónicos', icon:'🎁' },
+              // LÍNEA ÁMBAR
+              { id:'s52', name:'Aerosol Aromatizante Ámbar 280cc', price:3218, image:'', description:`Cont. 280 cc. Apto para aparatos. Pack: 12 uds.\nFragancias: ${fmtFragancias(AMBAR_AEROSOL_S)}`, grupo:'Línea Ámbar', subgrupo:'Ámbar', icon:'🌬️' },
+              { id:'s53', name:'Aromatizante Textil Ámbar 150ml', price:1572, image:'', description:`Cont. 150 ml. Ideal para cartera o mochila. Pack: 12 uds.\nFragancias: ${fmtFragancias(AMBAR_TEXTIL_S)}`, grupo:'Línea Ámbar', subgrupo:'Ámbar', icon:'👜' },
+              { id:'s54', name:'Aceite Esencial Ámbar 10ml', price:1524, image:'', description:`Cont. 10 ml. Apto para hornillos. Pack: 20 uds.\nFragancias: Amber · Bamboo · Cinnamon · Citronella · Coco Vainilla · Eucaliptus · Flores Blancas · Incienso · Jazmín · Lavanda · Limón · Palo Santo · Patchouly · Sándalo · Vainilla`, grupo:'Línea Ámbar', subgrupo:'Ámbar', icon:'🌿' },
+              { id:'s55', name:'Sahumerio Hand Rolled Ámbar x20', price:857, image:'', description:`Cont. 20 uds. Hand rolled. Pack: 6 uds.\nFragancias: Aaruda · Amber · Canela · Cinnamon · Citronella · Copal · Dragon's Blood · Incienso · Jazmín · Lavanda · Limón · Mirra · Musk · Nag Champa · Palo Santo · Patchouli · Rosas · Sándalo · Vainilla · Violetas · White Sage`, grupo:'Línea Ámbar', subgrupo:'Ámbar', icon:'🪷' },
+              // DISNEY
+              { id:'s60', name:'Textil Disney – Mickey 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Frutal.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🐭' },
+              { id:'s61', name:'Textil Disney – Minnie 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Frutal.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🎀' },
+              { id:'s62', name:'Textil Disney – Stitch 250ml (3 variantes)', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Frutal.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'👽' },
+              { id:'s63', name:'Textil Disney – Princesa 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Floral.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'👸' },
+              { id:'s64', name:'Textil Disney – Moana 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Frutal.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🌊' },
+              { id:'s65', name:'Textil Disney – Frozen 250ml (3 variantes)', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Floral.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'❄️' },
+              { id:'s66', name:'Textil Disney – Star Wars 250ml (2 variantes)', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Cítrico y Símil perfume.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'⭐' },
+              { id:'s67', name:'Textil Disney – The Mandalorian 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Símil perfume.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🪖' },
+              { id:'s68', name:'Textil Disney – Avengers / Marvel 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Símil perfume.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🦸' },
+              { id:'s69', name:'Textil Disney – Spider-Man 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Símil perfume.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🕷️' },
+              { id:'s70', name:'Textil Disney – Cars 250ml', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancia: Floral.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🏎️' },
+              { id:'s71', name:'Textil Disney – Toy Story 250ml (3 variantes)', price:2943, image:'', description:`Aromatizante para ropa y ambientes. 250 ml. Fragancias: Frutal y Gourmand.`, grupo:'Colección Disney', subgrupo:'Textil Disney', icon:'🤠' },
+              { id:'s80', name:'Difusor Disney – Mickey 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Frutal. Cód. 38.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'🐭' },
+              { id:'s81', name:'Difusor Disney – Minnie 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Frutal. Cód. 39.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'🎀' },
+              { id:'s82', name:'Difusor Disney – Stitch 125ml (3 variantes)', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Frutal.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'👽' },
+              { id:'s83', name:'Difusor Disney – Princesa 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Floral. Cód. 51.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'👸' },
+              { id:'s84', name:'Difusor Disney – Moana 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Frutal. Cód. 40.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'🌊' },
+              { id:'s85', name:'Difusor Disney – Frozen 125ml (3 variantes)', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Floral.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'❄️' },
+              { id:'s86', name:'Difusor Disney – Star Wars / Mandalorian 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancias: Cítrico y Símil. Cód. 53–55.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'⭐' },
+              { id:'s87', name:'Difusor Disney – Avengers / Marvel 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Símil. Cód. 56–57.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'🦸' },
+              { id:'s88', name:'Difusor Disney – Spider-Man 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Símil. Cód. 58.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'🕷️' },
+              { id:'s89', name:'Difusor Disney – Cars 125ml', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancia: Floral. Cód. 52.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'🏎️' },
+              { id:'s90', name:'Difusor Disney – Toy Story 125ml (3 variantes)', price:4169, image:'', description:`Difusor aromático 125 ml con varillas. Fragancias: Frutal y Gourmand.`, grupo:'Colección Disney', subgrupo:'Difusor Disney', icon:'🤠' },
+              // PELUCHES DISNEY
+              { id:'s91', name:'Peluche Minnie Disney', price:23000, image:'', description:`Ultra suave. Listo para abrazos. Perfecto como regalo. Cód. 48.`, grupo:'Colección Disney', subgrupo:'Peluches Disney', icon:'🎀' },
+              { id:'s92', name:'Peluche Olaf Disney', price:23000, image:'', description:`Ultra suave. Personaje de Frozen. Listo para abrazos. Cód. 46.`, grupo:'Colección Disney', subgrupo:'Peluches Disney', icon:'⛄' },
+              { id:'s93', name:'Peluche Mickey Disney', price:23000, image:'', description:`Ultra suave. El clásico Mickey Mouse. Cód. 47.`, grupo:'Colección Disney', subgrupo:'Peluches Disney', icon:'🐭' },
+              { id:'s94', name:'Peluche Stitch Disney', price:23000, image:'', description:`Ultra suave. Personaje de Lilo & Stitch. Cód. 70.`, grupo:'Colección Disney', subgrupo:'Peluches Disney', icon:'💙' },
+              { id:'s95', name:'Peluche Lotso Disney', price:23000, image:'', description:`Ultra suave. El adorable oso de Toy Story. Cód. 71.`, grupo:'Colección Disney', subgrupo:'Peluches Disney', icon:'🐻' },
+            ];
+
+            // Modal de fragancia Saphirus
+            const [modalSaphirus, setModalSaphirus] = useState(null); // { producto, fragancias }
+            const [fragBusqueda, setFragBusqueda] = useState('');
+
+            const [carrito, setCarrito] = useState(() => {
+                try { const s = localStorage.getItem('carrito'); return s ? JSON.parse(s) : []; } catch { return []; }
+            });
+            const [user, setUser] = useState(() => {
+                try { const s = localStorage.getItem('user'); return s ? JSON.parse(s) : null; } catch { return null; }
+            });
+
+            useEffect(() => { localStorage.setItem('carrito', JSON.stringify(carrito)); }, [carrito]);
+            useEffect(() => { localStorage.setItem('user', JSON.stringify(user)); }, [user]);
+            const [notif, setNotif] = useState(null);
+            const [busqueda, setBusqueda] = useState('');
+            const [grupoActivo, setGrupoActivo] = useState(null);
+            const [subgrupoActivo, setSubgrupoActivo] = useState(null);
+            const [vistaLista, setVistaLista] = useState(true);
+            const [marcaActiva, setMarcaActiva] = useState('sandra');
+
+            const showMsg = (m, t = 'success') => { setNotif({ m, t }); setTimeout(() => setNotif(null), 3000); };
+            const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(p);
+            const isPromo = (p) => p.name.includes('⭐ PROMO') || p.description.toLowerCase().includes('promo');
+            const promoVigencia = (p) => {
+                const match = p.description.match(/hasta\s+(\d{2}\/\d{2}(?:\/\d{2,4})?)/i);
+                return match ? match[1] : null;
+            };
+
+            // Precio según rol
+            const getPrecio = (p) => (user?.tipo === 'revendedor') ? p.price : (PRECIOS_PUBLICO[p.id] || p.price);
+            // Saphirus: precio público por defecto, reventa si es revendedor logueado
+            // Los productos Saphirus tienen price = precio reventa (mayorista)
+            // El precio público se calcula con un margen del 35% sobre el precio de reventa
+            // Precios públicos Saphirus (1-12 uds, del catálogo PDF Febrero 2026)
+            const PRECIOS_PUBLICO_SAPHIRUS = {
+                's1': 6160,   // Aerosol Aromatizante
+                's2': 4260,   // Perfume Textil 250ml
+                's3': 6030,   // Difusor Aromático 125ml
+                's4': 8510,   // Home Spray 500ml
+                's5': 3170,   // Mini Concentrado 60ml
+                's6': 5250,   // Touch + Repuesto
+                's7': 3270,   // Repuesto Touch
+                's8': 4690,   // Gel Sensaciones
+                's9': 9560,   // Sensaciones + Holder
+                's10': 7390,  // Tarjetas Aromáticas
+                's11': 3760,  // Route 66
+                's12': 3760,  // Caritas Aromáticas
+                's13': 9560,  // Latita Aromatizante
+                's14': 2390,  // Velas de Noche
+                's15': 3730,  // Aceite Esencial Saphirus
+                's16': 1520,  // Sahumerios Masala
+                's17': 2580,  // Sahumerios Himalaya
+                's18': 2270,  // Sahumerios Hierbas
+                's19': 2110,  // Sanitizante 60ml
+                's20': 3370,  // Sanitizante 250ml
+                's21': 4750,  // Sanitizante 500ml
+                's22': 6530,  // Parfum Mini
+                's23': 6530,  // Hornillo Chico marfil
+                's24': 8380,  // Hornillo Grande marfil
+                's25': 6530,  // Hornillo Chico arena
+                's26': 8380,  // Hornillo Grande arena
+                's27': 13870, // Equipo NBLCT-09
+                's28': 21810, // Equipo NBLCT-07
+                's29': 31200, // Equipo NBLCT-04 LCD
+                's30': 14580, // Equipo Deco Blanco
+                's31': 15370, // Equipo Deco Negro
+                's32': 15370, // Equipo Deco Arena
+                's33': 15370, // Equipo Deco Rojo
+                's34': 15370, // Equipo Deco Rosa
+                's35': 15370, // Equipo Deco Gris
+                's36': 23470, // Pack Premium Deco
+                's37': 22020, // Pack Premium Analógico
+                's38': 5010,  // Antihumedad 145gr
+                's39': 7680,  // Antihumedad 285gr
+                's40': 10020, // Antihumedad 385gr
+                's41': 7680,  // Antihumedad Percha
+                's42': 1730,  // Limpiador 250ml
+                's43': 4560,  // Lustramueble
+                's44': 2850,  // Desengrasante
+                's45': 2850,  // Limpiavidrios
+                's46': 2240,  // Red On Spray Mini 15%
+                's47': 4480,  // Red On Spray 200ml 15%
+                's48': 3590,  // Red On Aerosol 15%
+                's49': 2490,  // Red On Spray Mini 25%
+                's50': 5600,  // Red On Spray 25%
+                's51': 5050,  // Red On Aerosol 25%
+                's52': 4660,  // Aerosol Ámbar
+                's53': 2280,  // Textil Ámbar
+                's54': 2210,  // Aceite Ámbar
+                's55': 1240,  // Sahumerio Ámbar
+                // Disney textiles/difusores usan precio reventa * 1.45 estimado
+            };
+            const getPrecioPublicoSaphirus = (p) => {
+                if (PRECIOS_PUBLICO_SAPHIRUS[p.id]) return PRECIOS_PUBLICO_SAPHIRUS[p.id];
+                return Math.ceil(p.price * 1.45 / 10) * 10;
+            };
+            const getPrecioSaphirus = (p) => (user?.tipo === 'revendedor') ? p.price : getPrecioPublicoSaphirus(p);
+
+            // Cambio de marca: resetear filtros
+            const cambiarMarca = (marca) => { setMarcaActiva(marca); setGrupoActivo(null); setSubgrupoActivo(null); setBusqueda(''); };
+
+            // ── CATÁLOGO SAPHIRUS ─────────────────────────────────────────────
+            const ORDEN_GRUPOS_S = ['Aromas & Hogar','Auto','Salud & Limpieza','Perfumería','Equipos','Línea Ámbar','Colección Disney'];
+            const ICONOS_GRUPO_S = {'Aromas & Hogar':'home','Auto':'car','Salud & Limpieza':'shield','Perfumería':'wind','Equipos':'settings','Línea Ámbar':'star','Colección Disney':'sparkles'};
+            const productosSaphirusFiltrados = productosSaphirus.filter(p => {
+                const matchB = p.name.toLowerCase().includes(busqueda.toLowerCase()) || p.description.toLowerCase().includes(busqueda.toLowerCase());
+                const matchG = busqueda ? true : (grupoActivo ? p.grupo === grupoActivo : true);
+                const matchS = busqueda ? true : (subgrupoActivo ? p.subgrupo === subgrupoActivo : true);
+                return matchB && matchG && matchS;
+            });
+            const gruposSaphirus = ORDEN_GRUPOS_S.map(g => {
+                const itemsGrupo = productosSaphirusFiltrados.filter(p => p.grupo === g);
+                if (itemsGrupo.length === 0) return null;
+                const subgruposMap = {};
+                itemsGrupo.forEach(p => {
+                    const sg = p.subgrupo || 'General';
+                    if (!subgruposMap[sg]) subgruposMap[sg] = [];
+                    subgruposMap[sg].push(p);
+                });
+                return { grupo: g, items: itemsGrupo, subgrupos: subgruposMap };
+            }).filter(Boolean);
+            const subgruposSaphirusDelGrupo = grupoActivo
+                ? [...new Set(productosSaphirus.filter(p => p.grupo === grupoActivo).map(p => p.subgrupo).filter(Boolean))]
+                : [];
+
+            // ── CATÁLOGO SANDRA MARZZAN ───────────────────────────────────────
+            const ORDEN_GRUPOS = ["Línea Hogar","Línea Bebé","Línea Infantil","Línea Cuerpo","Línea Perfume","Línea Auto","Línea Salud","Otros Productos"];
+            const productosFiltrados = productos.filter(p => {
+                const matchBusqueda = p.name.toLowerCase().includes(busqueda.toLowerCase()) || p.description.toLowerCase().includes(busqueda.toLowerCase());
+                const matchGrupo = busqueda ? true : (grupoActivo ? p.grupo === grupoActivo : true);
+                const matchSubgrupo = busqueda ? true : (subgrupoActivo ? p.subgrupo === subgrupoActivo : true);
+                return matchBusqueda && matchGrupo && matchSubgrupo;
+            });
+            const grupos = ORDEN_GRUPOS.map(g => {
+                const itemsGrupo = productosFiltrados.filter(p => p.grupo === g);
+                if (itemsGrupo.length === 0) return null;
+                const subgruposMap = {};
+                itemsGrupo.forEach(p => {
+                    const sg = p.subgrupo || 'General';
+                    if (!subgruposMap[sg]) subgruposMap[sg] = [];
+                    subgruposMap[sg].push(p);
+                });
+                return { grupo: g, items: itemsGrupo, subgrupos: subgruposMap };
+            }).filter(Boolean);
+            const subgruposDelGrupo = grupoActivo
+                ? [...new Set(productos.filter(p => p.grupo === grupoActivo).map(p => p.subgrupo).filter(Boolean))]
+                : [];
+            const ICONOS_GRUPO = {"Línea Hogar":"home","Línea Bebé":"baby","Línea Infantil":"smile","Línea Cuerpo":"heart","Línea Perfume":"wind","Línea Auto":"car","Línea Salud":"shield","Otros Productos":"package"};
+
+
+            // Lógica Carrito
+            const [codigoDescuento, setCodigoDescuento] = useState('');
+            const [descuentoAplicado, setDescuentoAplicado] = useState(false);
+            const CODIGOS_DESCUENTO = { 'EL LOCO NESTOR': 10, 'DESC10': 10, 'COMPRA2':15};
+            const porcentajeDescuento = descuentoAplicado ? (CODIGOS_DESCUENTO[codigoDescuento.toUpperCase()] || 0) : 0;
+            const subtotal = carrito.reduce((t, i) => t + (i.precioUsado * i.cantidad), 0);
+            const descuento = (!user || user?.tipo !== 'revendedor') ? subtotal * porcentajeDescuento / 100 : 0;
+            const total = subtotal - descuento;
+            const cantidadTotal = carrito.reduce((t, i) => t + i.cantidad, 0);
+            const minimoRevendedor = 3;
+            const puedeConfirmar = user?.tipo === 'revendedor' ? cantidadTotal >= minimoRevendedor : true;
+            const gananciaRevendedor = user?.tipo === 'revendedor'
+                ? carrito.reduce((t, i) => t + ((PRECIOS_PUBLICO[i.id] || i.precioUsado) - i.precioUsado) * i.cantidad, 0)
+                : 0;
+
+            const updateCantidad = (idx, delta) => {
+                setCarrito(prev => prev.map((item, i) => {
+                    if (i !== idx) return item;
+                    const nueva = item.cantidad + delta;
+                    return nueva < 1 ? null : { ...item, cantidad: nueva };
+                }).filter(Boolean));
+            };
+
+            const addToCarrito = (p, precio, fragancia) => {
+                const itemKey = fragancia ? `${p.id}__${fragancia}` : p.id;
+                setCarrito(prev => {
+                    const idx = prev.findIndex(item => item._key === itemKey && item.precioUsado === precio);
+                    if (idx >= 0) {
+                        return prev.map((item, i) => i === idx ? { ...item, cantidad: item.cantidad + 1 } : item);
+                    }
+                    const displayName = fragancia ? `${p.name} — ${fragancia}` : p.name;
+                    return [...prev, { ...p, name: displayName, _key: itemKey, precioUsado: precio, cantidad: 1 }];
+                });
+                showMsg("Añadido");
+            };
+
+            // Para Saphirus: detectar si el producto tiene múltiples fragancias y abrir modal
+            const handleSaphirusAdd = (p, precio) => {
+                // Detectar fragancias en la descripción (linea que empieza con "Fragancias: ...")
+                const multiFrag = /fragancias?:\s*([^\n]+)/i.exec(p.description);
+                if (multiFrag) {
+                    // Parsear lista de fragancias separadas por " · "
+                    const lista = multiFrag[1].split(/\s*·\s*/).map(f => f.trim()).filter(Boolean);
+                    if (lista.length > 0) {
+                        setFragBusqueda('');
+                        setModalSaphirus({ producto: p, precio, fragancias: lista });
+                        return;
+                    }
+                }
+                addToCarrito(p, precio, null);
+            };
+
+            const finalizarPedidoTotal = async () => {
+                setCargandoEnvio(true);
+                const nombreCliente = user ? user.nombre : "Cliente público";
+                const emailCliente = user ? user.email : "—";
+                const esRevendedor = user?.tipo === 'revendedor';
+                const fechaPedido = new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+                // ── WhatsApp ──────────────────────────────────────────────
+                let msgWhatsApp = `🌿 *PEDIDO SAN MARTÍN AROMAS*\n`;
+                msgWhatsApp += `📅 ${fechaPedido}\n`;
+                msgWhatsApp += `👤 *Cliente:* ${nombreCliente}\n`;
+                msgWhatsApp += `━━━━━━━━━━━━━━━━━━━━━\n`;
+                const detalleWA = carrito.map(i => {
+                    const precioPublico = PRECIOS_PUBLICO[i.id] || i.precioUsado;
+                    let linea = `• ${i.name} (x${i.cantidad})\n`;
+                    linea += `  Reventa: ${formatPrice(i.precioUsado * i.cantidad)}`;
+                    if (esRevendedor && precioPublico > i.precioUsado) {
+                        linea += ` | P. sugerido: ${formatPrice(precioPublico)} c/u`;
+                    }
+                    return linea;
+                }).join('\n');
+                msgWhatsApp += detalleWA;
+                msgWhatsApp += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
+                msgWhatsApp += `*TOTAL REVENTA: ${formatPrice(total)}*`;
+                if (descuento > 0) msgWhatsApp += `\n🏷️ *Descuento (${porcentajeDescuento}%): -${formatPrice(descuento)}*`;
+                msgWhatsApp += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
+                msgWhatsApp += `💳 *Alias*: sanmartinaromas\n👤 *Titular*: Pacifico Humberto Montaldi`;
+
+                // ── Email simple ───────────────────────────────────────────
+                const detalleTexto = carrito.map(i => `• ${i.name} (x${i.cantidad}) - ${formatPrice(i.precioUsado * i.cantidad)}`).join('\n');
+
+                try {
+                    await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify({
+                            cliente: nombreCliente,
+                            email: emailCliente,
+                            pedido: detalleTexto,
+                            total_pedido: formatPrice(total),
+                            _subject: `Nuevo Pedido: ${nombreCliente}`
+                        })
+                    });
+                } catch (error) { console.error(error); }
+
+                window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msgWhatsApp)}`, '_blank');
+                setCarrito([]);
+                setVista('inicio');
+                setCargandoEnvio(false);
+                showMsg("Pedido enviado");
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    <header className="glass-header border-b sticky top-0 z-50 p-4">
+                        <div className="max-w-6xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-4 cursor-pointer" onClick={() => setVista('inicio')}>
+                                <img src={LOGO_URL} className="w-12 h-12 object-contain" />
+                                <div>
+                                    <h1 className="hidden sm:block font-extrabold text-aroma-600 uppercase tracking-tighter leading-none">San Martín Aromas</h1>
+                                    <span className="hidden sm:block text-[8px] tracking-[.3em] uppercase opacity-40 text-slate-500 font-normal">Aromas & Fragancias</span>
+                                </div>
+                            </div>
+                            <nav className="flex gap-6 items-center">
+                                <button onClick={() => { setVista('inicio'); window.scrollTo({top:0, behavior:'smooth'}); }} className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-aroma-500 transition-colors">Catálogo</button>
+                                <button onClick={() => setVista('carrito')} className="relative p-2 text-slate-400 hover:text-aroma-500 transition-colors">
+                                    <Icon name="shopping-bag" />
+                                    {carrito.length > 0 && <span className="absolute -top-1 -right-1 bg-aroma-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{carrito.length}</span>}
+                                </button>
+                                {user ? (
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs font-black text-aroma-600">{user.nombre.split(' ')[0]}</span>
+                                        <button onClick={() => { setUser(null); setVista('inicio'); showMsg("Sesión cerrada"); }} className="text-slate-300 hover:text-red-400"><Icon name="log-out" className="w-4 h-4"/></button>
+                                    </div>
+                                ) : (
+                                    <button onClick={() => setVista('login')} className="bg-aroma-500 text-white px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-aroma-600 shadow-xl shadow-aroma-100">Ingresar</button>
+                                )}
+                            </nav>
+                        </div>
+                    </header>
+
+                    {notif && (
+                        <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-[100] px-8 py-4 rounded-2xl shadow-2xl text-white text-sm font-bold animate-in flex items-center gap-3 ${notif.t === 'error' ? 'bg-red-500' : 'bg-aroma-600'}`}>
+                            <Icon name={notif.t === 'error' ? 'alert-circle' : 'check-circle'} />
+                            {notif.m}
+                        </div>
+                    )}
+
+                    {/* ── MODAL FRAGANCIAS SAPHIRUS — nivel raíz para que fixed funcione siempre ── */}
+                    {modalSaphirus && (
+                        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4" style={{background:'rgba(0,0,0,0.5)'}} onClick={() => { setModalSaphirus(null); setFragBusqueda(''); }}>
+                            <div className="bg-white rounded-[2.5rem] shadow-2xl p-6 w-full animate-in flex flex-col" style={{maxWidth:'360px', maxHeight:'80vh'}} onClick={e => e.stopPropagation()}>
+                                <div className="text-center mb-4 flex-shrink-0">
+                                    <span className="text-4xl">{modalSaphirus.producto.icon}</span>
+                                    <h3 className="font-black text-lg text-slate-800 mt-3 leading-snug">{modalSaphirus.producto.name.replace(/\s*\(.*\)/, '')}</h3>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-sky-400 mt-1">Elegí tu fragancia</p>
+                                </div>
+                                {modalSaphirus.fragancias.length > 8 && (
+                                    <input
+                                        autoFocus
+                                        type="text"
+                                        value={fragBusqueda}
+                                        onChange={e => setFragBusqueda(e.target.value)}
+                                        placeholder="Buscar fragancia..."
+                                        className="w-full px-4 py-2.5 mb-3 bg-sky-50 rounded-2xl text-sm font-medium outline-none border-2 border-transparent focus:border-sky-300 transition-all flex-shrink-0"
+                                    />
+                                )}
+                                <div className="flex flex-col gap-2 overflow-y-auto flex-1 pr-1" style={{overscrollBehavior:'contain'}}>
+                                    {modalSaphirus.fragancias
+                                        .filter(f => f.toLowerCase().includes(fragBusqueda.toLowerCase()))
+                                        .map(f => (
+                                        <button
+                                            key={f}
+                                            onClick={() => {
+                                                addToCarrito(modalSaphirus.producto, modalSaphirus.precio, f);
+                                                setModalSaphirus(null);
+                                                setFragBusqueda('');
+                                            }}
+                                            className="w-full px-5 py-3 rounded-2xl bg-sky-50 text-sky-700 font-bold text-sm hover:bg-sky-500 hover:text-white transition-all border border-sky-100 hover:border-sky-500 text-left flex-shrink-0"
+                                        >{f}</button>
+                                    ))}
+                                    {modalSaphirus.fragancias.filter(f => f.toLowerCase().includes(fragBusqueda.toLowerCase())).length === 0 && (
+                                        <p className="text-center text-slate-300 text-sm py-4 font-bold">Sin resultados</p>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={() => { setModalSaphirus(null); setFragBusqueda(''); }}
+                                    className="w-full mt-4 text-xs text-slate-400 hover:text-slate-600 font-bold uppercase tracking-widest py-2 flex-shrink-0"
+                                >Cancelar</button>
+                            </div>
+                        </div>
+                    )}
+
+                    <main className="flex-grow p-4 max-w-6xl mx-auto w-full">
+                        {vista === 'inicio' && (
+                            <div className="animate-in space-y-5">
+                                {/* ── TABS DE MARCA ──────────────────────────── */}
+                                <div className="flex items-center justify-center gap-2 pt-2">
+                                    <button
+                                        onClick={() => cambiarMarca('sandra')}
+                                        className={`flex items-center gap-2 px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest transition-all shadow-sm border-2 ${marcaActiva === 'sandra' ? 'bg-aroma-500 text-white border-aroma-500 shadow-aroma-100 shadow-lg' : 'bg-white text-slate-400 border-slate-100 hover:border-aroma-200 hover:text-aroma-500'}`}
+                                    >
+                                        <Icon name="leaf" className="w-3.5 h-3.5" />
+                                        Sandra Marzzan
+                                    </button>
+                                    <button
+                                        onClick={() => cambiarMarca('saphirus')}
+                                        className={`flex items-center gap-2 px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest transition-all shadow-sm border-2 ${marcaActiva === 'saphirus' ? 'bg-sky-500 text-white border-sky-500 shadow-sky-100 shadow-lg' : 'bg-white text-slate-400 border-slate-100 hover:border-sky-200 hover:text-sky-500'}`}
+                                    >
+                                        <Icon name="sparkles" className="w-3.5 h-3.5" />
+                                        Saphirus
+                                    </button>
+                                </div>
+
+                                {/* ── CATÁLOGO SAPHIRUS ─────────────────────── */}
+                                {marcaActiva === 'saphirus' && (
+                                    <div className="space-y-5">
+                                        {/* Hero Saphirus */}
+                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-3">
+                                            <div>
+                                                <p className="text-[9px] font-black uppercase tracking-[.4em] text-sky-400">Catálogo Oficial</p>
+                                                <h2 className="font-serif text-3xl font-bold italic text-slate-800 leading-tight">Saphirus<span className="text-sky-400">®</span></h2>
+                                                <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">
+                                                    {user?.tipo === 'revendedor' ? 'Precios de reventa · IVA incluido' : 'Precios al público · IVA incluido'}
+                                                </p>
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    const msg = encodeURIComponent("Hola Sandra! Quiero consultar por productos Saphirus.\n\nNombre: \nProducto: ");
+                                                    window.open(`https://wa.me/${WHATSAPP_SAPHIRUS}?text=${msg}`, '_blank');
+                                                }}
+                                                className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-green-100 transition-all flex-shrink-0"
+                                            >
+                                                <Icon name="message-circle" className="w-4 h-4" />
+                                                Consultar por WhatsApp
+                                            </button>
+                                        </div>
+
+                                        {/* Banner revendedor Saphirus */}
+                                        {user?.tipo === 'revendedor' && (
+                                            <div className="bg-sky-50 border border-sky-200 rounded-2xl px-6 py-3 text-xs font-bold text-sky-600 flex items-center gap-2">
+                                                <Icon name="tag" className="w-4 h-4" /> Mostrando precios de reventa · El precio público se calcula automáticamente en el carrito
+                                            </div>
+                                        )}
+
+                                        {/* Buscador Saphirus */}
+                                        <div className="flex gap-3 max-w-xl mx-auto w-full">
+                                            <div className="relative flex-1">
+                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none">
+                                                    <Icon name="search" className="w-5 h-5" />
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={busqueda}
+                                                    onChange={e => setBusqueda(e.target.value)}
+                                                    placeholder="Buscar en Saphirus..."
+                                                    className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl shadow-sm outline-none focus:border-sky-300 transition-all text-sm font-medium"
+                                                />
+                                                {busqueda && (
+                                                    <button onClick={() => setBusqueda('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500">
+                                                        <Icon name="x" className="w-4 h-4" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <button
+                                                onClick={() => setVistaLista(v => !v)}
+                                                className={`flex items-center gap-2 px-5 py-4 rounded-2xl border-2 font-bold transition-all flex-shrink-0 text-xs uppercase tracking-widest ${vistaLista ? 'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-100' : 'bg-white text-sky-500 border-sky-300 hover:bg-sky-50'}`}
+                                            >
+                                                <Icon name={vistaLista ? 'layout-grid' : 'list'} className="w-4 h-4" />
+                                                <span className="hidden sm:inline">{vistaLista ? 'Grilla' : 'Lista'}</span>
+                                            </button>
+                                        </div>
+
+                                        {/* Filtros Saphirus – Nivel 1 */}
+                                        {!busqueda && (
+                                            <div className="space-y-3">
+                                                <div className="flex flex-wrap gap-2 justify-center">
+                                                    <button
+                                                        onClick={() => { setGrupoActivo(null); setSubgrupoActivo(null); }}
+                                                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${!grupoActivo ? 'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-100' : 'bg-white text-slate-400 border-slate-100 hover:border-sky-200 hover:text-sky-500'}`}
+                                                    >
+                                                        <Icon name="grid" className="w-3 h-3" /> Todos
+                                                    </button>
+                                                    {ORDEN_GRUPOS_S.filter(g => productosSaphirus.some(p => p.grupo === g)).map(g => (
+                                                        <button
+                                                            key={g}
+                                                            onClick={() => { setGrupoActivo(g); setSubgrupoActivo(null); }}
+                                                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${grupoActivo === g ? 'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-100' : 'bg-white text-slate-400 border-slate-100 hover:border-sky-200 hover:text-sky-500'}`}
+                                                        >
+                                                            <Icon name={ICONOS_GRUPO_S[g] || 'tag'} className="w-3 h-3" />
+                                                            {g}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                                {/* Nivel 2: subgrupos */}
+                                                {grupoActivo && subgruposSaphirusDelGrupo.length > 1 && (
+                                                    <div className="flex flex-wrap gap-2 justify-center pt-1">
+                                                        <button
+                                                            onClick={() => setSubgrupoActivo(null)}
+                                                            className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${!subgrupoActivo ? 'bg-sky-600 text-white border-sky-600' : 'bg-sky-50 text-sky-500 border-sky-100 hover:bg-sky-100'}`}
+                                                        >Todo {grupoActivo}</button>
+                                                        {subgruposSaphirusDelGrupo.map(sg => (
+                                                            <button
+                                                                key={sg}
+                                                                onClick={() => setSubgrupoActivo(sg)}
+                                                                className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${subgrupoActivo === sg ? 'bg-sky-600 text-white border-sky-600' : 'bg-sky-50 text-sky-500 border-sky-100 hover:bg-sky-100'}`}
+                                                            >{sg}</button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Resultados Saphirus */}
+                                        {gruposSaphirus.length === 0 && (
+                                            <div className="text-center py-20 text-slate-300 font-bold uppercase tracking-widest text-xs">Sin resultados para "{busqueda}"</div>
+                                        )}
+
+                                        {/* Modal selección de fragancia Saphirus */}
+                                        {gruposSaphirus.map(({ grupo, items, subgrupos }) => (
+                                            <div key={grupo} className="space-y-6">
+                                                <div className="flex items-center gap-4">
+                                                    <h3 className="font-extrabold text-lg uppercase tracking-widest text-sky-500 whitespace-nowrap">{grupo}</h3>
+                                                    <div className="flex-1 h-px bg-sky-100"></div>
+                                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{items.length} productos</span>
+                                                </div>
+                                                {Object.entries(subgrupos).map(([sg, sgItems]) => (
+                                                    <div key={sg} className="space-y-3">
+                                                        {Object.keys(subgrupos).length > 1 && (
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">{sg}</span>
+                                                                <div className="flex-1 h-px bg-slate-50"></div>
+                                                            </div>
+                                                        )}
+                                                        <div className={vistaLista ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"}>
+                                                            {sgItems.map(p => {
+                                                                const precio = getPrecioSaphirus(p);
+                                                                const precioPublico = getPrecioPublicoSaphirus(p);
+                                                                const gananciaItemS = user?.tipo === 'revendedor' ? precioPublico - p.price : 0;
+                                                                if (vistaLista) {
+                                                                    return (
+                                                                        <div key={p.id} className="flex items-center gap-4 bg-white rounded-2xl px-5 py-4 border border-slate-100 shadow-sm transition-all hover:shadow-md">
+                                                                            <div className="w-14 h-14 rounded-xl bg-sky-50 flex items-center justify-center flex-shrink-0 text-2xl">{p.icon}</div>
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <h4 className="font-bold text-sm text-slate-800 leading-snug">{p.name}</h4>
+                                                                                <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-2 whitespace-pre-line">{p.description.split('\n')[0]}</p>
+                                                                                {p.description.includes('\n') && (
+                                                                                    <p className="text-[9px] text-sky-400 mt-0.5 line-clamp-1">{p.description.split('\n')[1]}</p>
+                                                                                )}
+                                                                                {user?.tipo === 'revendedor' && gananciaItemS > 0 && (
+                                                                                    <p className="text-[10px] text-green-600 font-bold">Ganás {formatPrice(gananciaItemS)} c/u</p>
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="flex items-center gap-3 flex-shrink-0">
+                                                                                <div className="text-right">
+                                                                                    {user?.tipo === 'revendedor' && (
+                                                                                        <span className="text-[10px] text-slate-400 line-through block">{formatPrice(precioPublico)}</span>
+                                                                                    )}
+                                                                                    <span className="text-base font-black italic text-sky-600">{formatPrice(precio)}</span>
+                                                                                </div>
+                                                                                <button onClick={() => handleSaphirusAdd(p, precio)} className="bg-sky-50 text-sky-500 p-2 rounded-xl hover:bg-sky-500 hover:text-white transition-all"><Icon name="plus" className="w-4 h-4"/></button>
+                                                                            </div>
+                                                                        </div>
+                                                                    );
+                                                                }
+                                                                return (
+                                                                    <div key={p.id} className="product-card bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm transition-all group relative">
+                                                                        <div className="aspect-square rounded-3xl overflow-hidden mb-6 bg-sky-50 flex items-center justify-center text-5xl">
+                                                                            {p.icon}
+                                                                        </div>
+                                                                        <h4 className="font-bold text-base mb-1 text-slate-800 leading-snug">{p.name}</h4>
+                                                                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{p.description.split('\n')[0]}</p>
+                                                                        {p.description.includes('\n') && (
+                                                                            <p className="text-[9px] text-sky-400 mt-1 line-clamp-2">{p.description.split('\n')[1]}</p>
+                                                                        )}
+                                                                        {user?.tipo === 'revendedor' && gananciaItemS > 0 && (
+                                                                            <p className="text-[10px] text-green-600 font-bold mt-1 flex items-center gap-1">
+                                                                                <span>💰</span> Ganás {formatPrice(gananciaItemS)} c/u
+                                                                            </p>
+                                                                        )}
+                                                                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-50">
+                                                                            <div>
+                                                                                {user?.tipo === 'revendedor' && (
+                                                                                    <span className="text-xs text-slate-400 line-through block">{formatPrice(precioPublico)}</span>
+                                                                                )}
+                                                                                <span className="text-xl font-black italic text-sky-600">{formatPrice(precio)}</span>
+                                                                            </div>
+                                                                            <button onClick={() => handleSaphirusAdd(p, precio)} className="p-3 rounded-xl bg-sky-50 text-sky-500 hover:bg-sky-500 hover:text-white transition-all"><Icon name="plus" /></button>
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* ── CATÁLOGO SANDRA MARZZAN ───────────────── */}
+                                {marcaActiva === 'sandra' && (<div className="space-y-5">
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-3">
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase tracking-[.4em] text-aroma-400">Catálogo Oficial</p>
+                                        <h2 className="font-serif text-3xl font-bold italic text-slate-800 leading-tight">San Martín Aromas</h2>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            const msg = encodeURIComponent("Hola! Quiero mi usuario para lista mayorista, mis datos son:\n\nNombre: \nDirección: \nDNI: ");
+                                            window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+                                        }}
+                                        className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-green-100 transition-all flex-shrink-0"
+                                    >
+                                        <Icon name="users" className="w-4 h-4" />
+                                        Pedí tu usuario mayorista
+                                    </button>
+                                </div>
+
+                                {/* Banner vigencia lista de precios */}
+                                <div className="flex items-center justify-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-6 py-2.5">
+                                    <Icon name="calendar" className="w-4 h-4 text-amber-500" />
+                                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">Lista vigente: <span className="font-black">09 Abril — 07 Mayo 2026</span></p>
+                                    <span className="hidden sm:flex items-center gap-1 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full">
+                                        <Icon name="tag" className="w-3 h-3" /> Promos activas
+                                    </span>
+                                </div>
+
+                                {/* Banner revendedor */}
+                                {user?.tipo === 'revendedor' && (
+                                    <div className="bg-aroma-50 border border-aroma-200 rounded-2xl px-6 py-3 text-xs font-bold text-aroma-600 flex items-center gap-2">
+                                        <Icon name="tag" className="w-4 h-4" /> Mostrando precios de reventa
+                                    </div>
+                                )}
+
+                                {/* Buscador */}
+                                <div className="flex gap-3 max-w-xl mx-auto w-full">
+                                    <div className="relative flex-1">
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none">
+                                            <Icon name="search" className="w-5 h-5" />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={busqueda}
+                                            onChange={e => setBusqueda(e.target.value)}
+                                            placeholder="Buscar producto..."
+                                            className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl shadow-sm outline-none focus:border-aroma-300 transition-all text-sm font-medium"
+                                        />
+                                        {busqueda && (
+                                            <button onClick={() => setBusqueda('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500">
+                                                <Icon name="x" className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => setVistaLista(v => !v)}
+                                        className={`flex items-center gap-2 px-5 py-4 rounded-2xl border-2 font-bold transition-all flex-shrink-0 text-xs uppercase tracking-widest ${vistaLista ? 'bg-aroma-500 text-white border-aroma-500 shadow-lg shadow-aroma-100' : 'bg-white text-aroma-500 border-aroma-300 hover:bg-aroma-50'}`}
+                                        title={vistaLista ? 'Vista grilla' : 'Vista lista'}
+                                    >
+                                        <Icon name={vistaLista ? 'layout-grid' : 'list'} className="w-4 h-4" />
+                                        <span className="hidden sm:inline">{vistaLista ? 'Grilla' : 'Lista'}</span>
+                                    </button>
+                                </div>
+
+                                {/* Menú de grupos — nivel 1 */}
+                                {!busqueda && (
+                                    <div className="space-y-3">
+                                        <div className="flex flex-wrap gap-2 justify-center">
+                                            <button
+                                                onClick={() => { setGrupoActivo(null); setSubgrupoActivo(null); }}
+                                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${!grupoActivo ? 'bg-aroma-500 text-white border-aroma-500 shadow-lg shadow-aroma-100' : 'bg-white text-slate-400 border-slate-100 hover:border-aroma-200 hover:text-aroma-500'}`}
+                                            >
+                                                <Icon name="grid" className="w-3 h-3" /> Todos
+                                            </button>
+                                            {ORDEN_GRUPOS.filter(g => productos.some(p => p.grupo === g)).map(g => (
+                                                <button
+                                                    key={g}
+                                                    onClick={() => { setGrupoActivo(g); setSubgrupoActivo(null); }}
+                                                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${grupoActivo === g ? 'bg-aroma-500 text-white border-aroma-500 shadow-lg shadow-aroma-100' : 'bg-white text-slate-400 border-slate-100 hover:border-aroma-200 hover:text-aroma-500'}`}
+                                                >
+                                                    <Icon name={ICONOS_GRUPO[g] || 'tag'} className="w-3 h-3" />
+                                                    {g.replace('Línea ', '')}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Nivel 2: subgrupos del grupo activo */}
+                                        {grupoActivo && subgruposDelGrupo.length > 1 && (
+                                            <div className="flex flex-wrap gap-2 justify-center pt-1">
+                                                <button
+                                                    onClick={() => setSubgrupoActivo(null)}
+                                                    className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${!subgrupoActivo ? 'bg-aroma-600 text-white border-aroma-600' : 'bg-aroma-50 text-aroma-500 border-aroma-100 hover:bg-aroma-100'}`}
+                                                >
+                                                    Todo {grupoActivo.replace('Línea ', '')}
+                                                </button>
+                                                {subgruposDelGrupo.map(sg => (
+                                                    <button
+                                                        key={sg}
+                                                        onClick={() => setSubgrupoActivo(sg)}
+                                                        className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${subgrupoActivo === sg ? 'bg-aroma-600 text-white border-aroma-600' : 'bg-aroma-50 text-aroma-500 border-aroma-100 hover:bg-aroma-100'}`}
+                                                    >
+                                                        {sg}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Resultados */}
+                                {grupos.length === 0 && (
+                                    <div className="text-center py-20 text-slate-300 font-bold uppercase tracking-widest text-xs">Sin resultados para "{busqueda}"</div>
+                                )}
+
+                                {grupos.map(({ grupo, items, subgrupos }) => (
+                                    <div key={grupo} className="space-y-6">
+                                        {/* Título de grupo */}
+                                        <div className="flex items-center gap-4">
+                                            <h3 className="font-extrabold text-lg uppercase tracking-widest text-aroma-600 whitespace-nowrap">{grupo}</h3>
+                                            <div className="flex-1 h-px bg-aroma-100"></div>
+                                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{items.length} productos</span>
+                                        </div>
+                                        {/* Subgrupos */}
+                                        {Object.entries(subgrupos).map(([sg, sgItems]) => (
+                                            <div key={sg} className="space-y-3">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">{sg}</span>
+                                                    <div className="flex-1 h-px bg-slate-50"></div>
+                                                </div>
+                                                <div className={vistaLista ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"}>
+                                                    {sgItems.map(p => {
+                                                        const precio = getPrecio(p);
+                                                        const promo = isPromo(p);
+                                                        const vigencia = promoVigencia(p);
+                                                        const precioPublico = PRECIOS_PUBLICO[p.id] || precio;
+                                                        const gananciaItem = user?.tipo === 'revendedor' ? precioPublico - precio : 0;
+                                                        const cleanName = p.name.replace('⭐ PROMO', '').trim();
+                                                        if (vistaLista) {
+                                                            return (
+                                                                <div key={p.id} className={`flex items-center gap-4 bg-white rounded-2xl px-5 py-4 border shadow-sm transition-all hover:shadow-md ${promo ? 'border-amber-200 bg-amber-50/30' : 'border-slate-100'}`}>
+                                                                    {p.image ? (
+                                                                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-50 flex-shrink-0">
+                                                                            <img src={p.image} loading="lazy" className="w-full h-full object-contain" />
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center flex-shrink-0">
+                                                                            <Icon name="package" className="w-6 h-6 text-slate-300" />
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                                            <h4 className="font-bold text-sm text-slate-800 leading-snug">{cleanName}</h4>
+                                                                            {promo && <span className="bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full">PROMO</span>}
+                                                                        </div>
+                                                                        {vigencia && <p className="text-[10px] text-amber-600 font-bold mt-0.5">⏰ Válido hasta {vigencia}</p>}
+                                                                        {user?.tipo === 'revendedor' && gananciaItem > 0 && (
+                                                                            <p className="text-[10px] text-green-600 font-bold">Ganás {formatPrice(gananciaItem)} c/u</p>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="flex items-center gap-3 flex-shrink-0">
+                                                                        <span className={`text-base font-black italic ${promo ? 'text-amber-600' : 'text-aroma-600'}`}>{formatPrice(precio)}</span>
+                                                                        <button onClick={() => addToCarrito(p, precio)} className="bg-aroma-50 text-aroma-500 p-2 rounded-xl hover:bg-aroma-500 hover:text-white transition-all"><Icon name="plus" className="w-4 h-4"/></button>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        }
+                                                        return (
+                                                            <div key={p.id} className={`product-card bg-white rounded-[2.5rem] p-6 border shadow-sm transition-all group relative ${promo ? 'border-amber-200' : 'border-slate-100'}`}>
+                                                                {promo && (
+                                                                    <div className="absolute top-4 right-4 z-10">
+                                                                        <span className="bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-lg">PROMO</span>
+                                                                    </div>
+                                                                )}
+                                                                {p.image && (
+                                                                    <div className={`aspect-square rounded-3xl overflow-hidden mb-6 relative ${promo ? 'bg-amber-50' : 'bg-slate-50'}`}>
+                                                                        <img src={p.image} loading="lazy" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+                                                                    </div>
+                                                                )}
+                                                                <h4 className="font-bold text-base mb-1 text-slate-800 leading-snug">{cleanName}</h4>
+                                                                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{p.description.replace(/\s*—\s*PROMO.*/i, '')}</p>
+                                                                {vigencia && (
+                                                                    <p className="text-[10px] text-amber-600 font-bold mt-1.5 flex items-center gap-1">
+                                                                        <span>⏰</span> Válido hasta {vigencia}
+                                                                    </p>
+                                                                )}
+                                                                {user?.tipo === 'revendedor' && gananciaItem > 0 && (
+                                                                    <p className="text-[10px] text-green-600 font-bold mt-1 flex items-center gap-1">
+                                                                        <span>💰</span> Ganás {formatPrice(gananciaItem)} c/u
+                                                                    </p>
+                                                                )}
+                                                                <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-50">
+                                                                    <div>
+                                                                        {promo && precioPublico > precio && (
+                                                                            <span className="text-xs text-slate-400 line-through block">{formatPrice(precioPublico)}</span>
+                                                                        )}
+                                                                        <span className={`text-xl font-black italic ${promo ? 'text-amber-600' : 'text-aroma-600'}`}>{formatPrice(precio)}</span>
+                                                                    </div>
+                                                                    <button onClick={() => addToCarrito(p, precio)} className={`p-3 rounded-xl transition-all ${promo ? 'bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white' : 'bg-aroma-50 text-aroma-500 hover:bg-aroma-500 hover:text-white'}`}><Icon name="plus" /></button>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                                </div>)}
+                            </div>
+                        )}
+
+                        {vista === 'login' && (
+                            <div className="max-w-sm mx-auto mt-20 animate-in">
+                                <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-50 text-center relative">
+                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-white rounded-full p-4 shadow-xl border border-slate-50">
+                                        <img src={LOGO_URL} className="w-full h-full object-contain" />
+                                    </div>
+                                    <h2 className="text-2xl font-black mt-8 mb-2">Portal Revendedor</h2>
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-8">Ingresá tu correo habilitado</p>
+                                    <input type="email" id="emailLogin" className="w-full p-4 bg-slate-50 rounded-2xl font-bold text-center outline-none border-2 border-transparent focus:border-aroma-200 mb-4 transition-all" placeholder="ejemplo@correo.com" />
+                                    <button onClick={() => {
+                                        const email = document.getElementById('emailLogin').value.toLowerCase().trim();
+                                        const found = usuarios.find(u => u.email.toLowerCase() === email);
+                                        if(found) { setUser(found); setVista('inicio'); showMsg(`Hola, ${found.nombre}`); }
+                                        else showMsg("Email no habilitado", "error");
+                                    }} className="w-full bg-aroma-500 text-white py-4 rounded-2xl font-bold uppercase tracking-widest shadow-xl shadow-aroma-100 hover:bg-aroma-600 transition-all mb-3">Ingresar como Revendedor</button>
+                                    <button onClick={() => setVista('inicio')} className="text-xs text-slate-400 hover:text-aroma-500 font-bold uppercase tracking-widest">Volver al catálogo público</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {vista === 'carrito' && (
+                            <div className="max-w-2xl mx-auto animate-in space-y-8">
+                                <h2 className="text-4xl font-black italic font-serif text-center text-slate-800">Tu Pedido</h2>
+                                <div className="bg-white p-8 rounded-[3rem] shadow-2xl border border-slate-50 relative">
+                                    {carrito.length === 0 ? (
+                                        <div className="text-center py-20 text-slate-300 font-bold uppercase tracking-widest text-[10px]">Vacío</div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {carrito.map((item, i) => {
+                                                const precioPublico = PRECIOS_PUBLICO[item.id] || item.precioUsado;
+                                                const gananciaItem = user?.tipo === 'revendedor' ? (precioPublico - item.precioUsado) * item.cantidad : 0;
+                                                return (
+                                                <div key={i} className="flex justify-between items-center border-b pb-4 border-slate-50">
+                                                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                                                        <div className="w-14 h-14 rounded-2xl bg-slate-50 overflow-hidden flex items-center justify-center flex-shrink-0">
+                                                            {item.image ? <img src={item.image} loading="lazy" className="w-full h-full object-cover"/> : <Icon name="package" className="w-6 h-6 text-slate-300"/>}
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="font-bold text-slate-700 text-sm leading-snug truncate">{item.name.replace('⭐ PROMO','').trim()}</p>
+                                                            <p className="text-[10px] text-slate-400 font-black">{formatPrice(item.precioUsado)} c/u</p>
+                                                            {user?.tipo === 'revendedor' && gananciaItem > 0 && (
+                                                                <p className="text-[10px] text-green-600 font-bold">💰 Ganás {formatPrice(gananciaItem)}</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+                                                        <div className="flex items-center gap-1 bg-slate-50 rounded-xl p-1">
+                                                            <button onClick={() => updateCantidad(i, -1)} className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-aroma-600 hover:bg-white rounded-lg transition-all font-black text-lg">−</button>
+                                                            <span className="w-7 text-center text-sm font-black text-slate-700">{item.cantidad}</span>
+                                                            <button onClick={() => updateCantidad(i, +1)} className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-aroma-600 hover:bg-white rounded-lg transition-all font-black text-lg">+</button>
+                                                        </div>
+                                                        <span className="text-sm font-black text-aroma-600 w-20 text-right">{formatPrice(item.precioUsado * item.cantidad)}</span>
+                                                        <button onClick={() => setCarrito(carrito.filter((_, idx) => idx !== i))} className="text-slate-200 hover:text-red-400"><Icon name="trash" className="w-4 h-4"/></button>
+                                                    </div>
+                                                </div>
+                                                );
+                                            })}
+                                            <div className="pt-8 mt-8 border-t-2 border-slate-50 space-y-4">
+                                                {/* Campo código descuento — solo para público */}
+                                                {(!user || user?.tipo !== 'revendedor') && (
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="text"
+                                                            value={codigoDescuento}
+                                                            onChange={e => { setCodigoDescuento(e.target.value); setDescuentoAplicado(false); }}
+                                                            placeholder="Código de descuento"
+                                                            className="flex-1 px-4 py-3 bg-slate-50 rounded-2xl text-sm font-bold outline-none border-2 border-transparent focus:border-aroma-200 transition-all uppercase"
+                                                        />
+                                                        <button
+                                                            onClick={() => {
+                                                                if (CODIGOS_DESCUENTO[codigoDescuento.toUpperCase()]) {
+                                                                    setDescuentoAplicado(true);
+                                                                    showMsg(`¡${CODIGOS_DESCUENTO[codigoDescuento.toUpperCase()]}% de descuento aplicado!`);
+                                                                } else {
+                                                                    showMsg('Código inválido', 'error');
+                                                                }
+                                                            }}
+                                                            className="bg-aroma-500 text-white px-5 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-aroma-600 transition-all"
+                                                        >Aplicar</button>
+                                                    </div>
+                                                )}
+                                                {/* Descuento aplicado */}
+                                                {descuento > 0 && (
+                                                    <div className="flex justify-between text-sm font-bold text-green-600">
+                                                        <span>Descuento ({porcentajeDescuento}%)</span>
+                                                        <span>- {formatPrice(descuento)}</span>
+                                                    </div>
+                                                )}
+                                                {/* Aviso mínimo revendedor */}
+                                                {user?.tipo === 'revendedor' && cantidadTotal < minimoRevendedor && (
+                                                    <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-xs font-bold text-amber-600 flex items-center gap-2">
+                                                        <Icon name="alert-circle" className="w-4 h-4" />
+                                                        Mínimo {minimoRevendedor} unidades para revendedor. Llevas {cantidadTotal}.
+                                                    </div>
+                                                )}
+                                                {/* Ganancia revendedor total */}
+                                                {user?.tipo === 'revendedor' && gananciaRevendedor > 0 && (
+                                                    <div className="bg-green-50 border border-green-200 rounded-2xl px-4 py-3 flex justify-between items-center">
+                                                        <div className="flex items-center gap-2 text-green-700 font-bold text-xs">
+                                                            <Icon name="trending-up" className="w-4 h-4" />
+                                                            Ganancia si vendés al público
+                                                        </div>
+                                                        <span className="text-green-700 font-black text-base">{formatPrice(gananciaRevendedor)}</span>
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-between items-end pt-4">
+                                                    <span className="text-4xl font-black text-aroma-700 italic font-serif">{formatPrice(total)}</span>
+                                                    <button onClick={finalizarPedidoTotal} disabled={cargandoEnvio || !puedeConfirmar} className={`px-10 py-5 rounded-[2rem] font-black uppercase text-[10px] tracking-widest shadow-xl transition-all ${puedeConfirmar ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-100' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}>
+                                                        {cargandoEnvio ? 'Enviando...' : 'Confirmar'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(console.error);
+        }
+    </script>
+</body>
+</html>
