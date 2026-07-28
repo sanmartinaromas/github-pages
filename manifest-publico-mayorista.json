@@ -1,0 +1,12 @@
+{
+  "name": "Artículos de Limpieza - Público y Mayorista",
+  "short_name": "Limpieza",
+  "start_url": "./publico_mayorista.html",
+  "display": "standalone",
+  "background_color": "#1a4f8b",
+  "theme_color": "#1a4f8b",
+  "icons": [
+    { "src": "icon-192-green.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512-green.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
