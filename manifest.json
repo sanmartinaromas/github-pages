@@ -2,7 +2,7 @@
   "name": "San Martín Aromas",
   "short_name": "San Martín Aromas",
   "description": "San Martín Aromas - Ventas por mayor y menor",
-  "start_url": "/splash.html",
+  "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
