@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest-admin.json">
+<meta name="theme-color" content="#1a4f8b">
+<link rel="apple-touch-icon" href="icon-192-blue.png">
+<title>Uso interno · Armar pedido para cliente</title>
+<style>
+  :root{
+    --ink:#20241f;
+    --paper:#f6f4ee;
+    --card:#ffffff;
+    --line:#dcd8cc;
+    --accent:#1b7a3d;
+    --accent-soft:#dcefe2;
+    --mut:#6b6a63;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI', Roboto, Arial, sans-serif; background:var(--paper); color:var(--ink); padding-bottom:90px; }
+
+  header{ background:var(--ink); color:var(--paper); padding:16px 16px 14px; position:sticky; top:0; z-index:20; }
+  header .top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  header h1{ margin:0; font-size:19px; font-weight:700; }
+  header .tag{ font-size:11px; opacity:.7; }
+  .search-wrap{ padding:12px 16px 0; }
+  #search{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line); font-size:14px; background:var(--card); }
+
+  .promo-banner{
+    margin:10px 16px 0; padding:10px 12px; border-radius:10px; font-size:13px; font-weight:700; text-align:center;
+    background:#fff3cd; color:#7a5b00; border:1px solid #f0d98c;
+  }
+
+  main{ padding:8px 16px 20px; max-width:760px; margin:0 auto; }
+  .grupo-title{ font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--mut); margin:22px 0 6px; font-weight:700; }
+  .rubro{ margin-top:14px; }
+  .rubro-h{ background:var(--accent-soft); color:var(--ink); padding:7px 10px; border-radius:8px; font-size:13.5px; font-weight:700; margin-bottom:6px; }
+  .prod{ display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 10px; margin-bottom:6px; }
+  .prod-name{ font-size:13.5px; line-height:1.25; }
+  .prod-price{ font-size:13.5px; font-weight:700; color:var(--accent); white-space:nowrap; margin-top:2px; display:block;}
+  .prod-right{ display:flex; align-items:center; gap:8px; }
+  .qty-btn{ width:26px; height:26px; border-radius:50%; border:1px solid var(--line); background:#fff; font-size:15px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .qty-val{ min-width:18px; text-align:center; font-size:13px; font-weight:600;}
+  .add-btn{ background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap; }
+  .no-results{ text-align:center; color:var(--mut); padding:40px 10px; font-size:13.5px; }
+
+  .cart-bar{ position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--ink); color:#fff; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 -4px 14px rgba(0,0,0,.18); }
+  .cart-bar .info{ font-size:13px; } .cart-bar .info b{ font-size:15px; }
+  .cart-bar button{ background:var(--accent); color:#fff; border:none; border-radius:9px; padding:10px 16px; font-size:13.5px; font-weight:700; cursor:pointer; }
+
+  .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:40; display:none; align-items:flex-end; justify-content:center; }
+  .modal-bg.open{ display:flex; }
+  .modal{ background:#fff; width:100%; max-width:760px; border-radius:16px 16px 0 0; max-height:82vh; overflow-y:auto; padding:18px 16px 20px; }
+  .modal h2{ margin:0 0 10px; font-size:17px; }
+  .cart-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--line); }
+  .cart-row .nm{ font-size:13px; } .cart-row .sub{ font-size:12px; color:var(--mut); }
+  .cart-row .rm{ background:none; border:none; color:#b3261e; font-size:12px; cursor:pointer; padding:4px; }
+
+  .totals{ margin-top:10px; }
+  .totals .line{ display:flex; justify-content:space-between; font-size:14px; padding:3px 0; }
+  .totals .line.discount{ color:#1b7a3d; font-weight:700; }
+  .totals .line.total{ font-size:18px; font-weight:800; border-top:1px solid var(--line); margin-top:6px; padding-top:8px; }
+
+  .discount-note{ font-size:12px; color:#1b7a3d; font-weight:700; text-align:center; margin:8px 0; background:#e2f3e6; border-radius:8px; padding:8px; }
+  .discount-hint{ font-size:12px; color:var(--mut); text-align:center; margin:8px 0; }
+
+  .pago-box{ background:#f2f7fd; border:1.5px solid #a9c9f0; border-radius:10px; padding:12px 14px; margin-top:14px; }
+  .pago-title{ font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#1a4f8b; margin-bottom:6px; }
+  .pago-line{ font-size:13px; color:var(--ink); line-height:1.5; }
+  .pago-alias{ margin-top:2px; }
+  .pago-alias b{ background:#ffd400; padding:1px 6px; border-radius:5px; }
+
+  .whatsapp-btn{ display:block; width:100%; text-align:center; text-decoration:none; background:#25D366; color:#fff; padding:13px; border-radius:10px; font-weight:700; font-size:14.5px; margin-top:10px; }
+  .close-modal{ background:none; border:1px solid var(--line); border-radius:8px; padding:7px 12px; font-size:12.5px; cursor:pointer; float:right; }
+  .empty-cart{ color:var(--mut); font-size:13.5px; text-align:center; padding:20px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top">
+    <div>
+      <h1>Armar pedido</h1>
+      <span class="tag">Uso interno · Para responderle al cliente</span>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <input id="search" type="text" placeholder="Buscar producto...">
+  </div>
+</header>
+
+<div class="promo-banner">💳 10% de descuento en compras mayores a $40.000, pagando en efectivo o transferencia</div>
+
+<main id="catalogo"></main>
+
+<div class="cart-bar">
+  <div class="info"><span id="cartCount">0</span> productos &middot; <b id="cartTotal">$0</b></div>
+  <button onclick="openCart()">Ver pedido</button>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <button class="close-modal" onclick="closeCart()">Cerrar</button>
+    <h2>Pedido del cliente</h2>
+    <div id="cartList"></div>
+
+    <div class="totals" id="totalsBox"></div>
+    <div id="discountMsg"></div>
+
+    <div class="pago-box">
+      <div class="pago-title">Datos de pago</div>
+      <div class="pago-line">Banco del Sol</div>
+      <div class="pago-line">Titular: Pacífico Humberto Montaldi</div>
+      <div class="pago-line">CUIT: 20-27093324-7</div>
+      <div class="pago-line pago-alias">Alias: <b>limpieza.hm</b></div>
+    </div>
+
+    <a id="waLink" class="whatsapp-btn" href="#" target="_blank" rel="noopener">Enviar mensaje al cliente</a>
+  </div>
+</div>
+
+<script>
+const MULT = 1.40; // precio publico
+const DISCOUNT_THRESHOLD = 40000;
+const DISCOUNT_RATE = 0.10;
+
+let cart = {};
+const PRODUCTS = [{"id": 1, "grupo": "Artículos Varios", "rubro": "Escobas, Escobillones y Repuestos", "nombre": "Cepillo tipo Planchita", "precio": 2000}, {"id": 2, "grupo": "Artículos Varios", "rubro": "Escobas, Escobillones y Repuestos", "nombre": "Escoba 3 Facetas", "precio": 4800}, {"id": 3, "grupo": "Artículos Varios", "rubro": "Escobas, Escobillones y Repuestos", "nombre": "Escoba Bodeguera", "precio": 4980}, {"id": 4, "grupo": "Artículos Varios", "rubro": "Escobas, Escobillones y Repuestos", "nombre": "Escoba Comun", "precio": 4500}, {"id": 5, "grupo": "Artículos Varios", "rubro": "Escobas, Escobillones y Repuestos", "nombre": "Escobillon Curvo Chico", "precio": 1900}, {"id": 6, "grupo": "Artículos Varios", "rubro": "Escobas, Escobillones y Repuestos", "nombre": "Escobillon Curvo Grande", "precio": 2500}, {"id": 7, "grupo": "Artículos Varios", "rubro": "Escobas, Escobillones y Repuestos", "nombre": "Repuesto Esc. Economico", "precio": 2300}, {"id": 8, "grupo": "Artículos Varios", "rubro": "Baldes y Bolsas", "nombre": "Balde C/Es. Economico", "precio": 4800}, {"id": 9, "grupo": "Artículos Varios", "rubro": "Baldes y Bolsas", "nombre": "Bidones Plasticos x 20 Ltrs.", "precio": 3500}, {"id": 10, "grupo": "Artículos Varios", "rubro": "Baldes y Bolsas", "nombre": "Bolsa para Consorcio x 10 U.", "precio": 1200}, {"id": 11, "grupo": "Artículos Varios", "rubro": "Baldes y Bolsas", "nombre": "Bolsa Residuos x 10 U.", "precio": 600}, {"id": 12, "grupo": "Artículos Varios", "rubro": "Baldes y Bolsas", "nombre": "Bolsa Superconsorcio x 10 U.", "precio": 2000}, {"id": 13, "grupo": "Artículos Varios", "rubro": "Guantes, Esponjas y Estropajos", "nombre": "Esponja para Platos x 12 U.", "precio": 6600}, {"id": 14, "grupo": "Artículos Varios", "rubro": "Guantes, Esponjas y Estropajos", "nombre": "Estropajo 15 Grs.", "precio": 500}, {"id": 15, "grupo": "Artículos Varios", "rubro": "Guantes, Esponjas y Estropajos", "nombre": "Estropajo 30 Grs. x 12 U.", "precio": 1000}, {"id": 16, "grupo": "Artículos Varios", "rubro": "Guantes, Esponjas y Estropajos", "nombre": "Guantes de Latex Preferido", "precio": 1400}, {"id": 17, "grupo": "Artículos Varios", "rubro": "Guantes, Esponjas y Estropajos", "nombre": "Guantes Preferido (Chico)", "precio": 1400}, {"id": 18, "grupo": "Artículos Varios", "rubro": "Guantes, Esponjas y Estropajos", "nombre": "Guantes Preferido (Grande)", "precio": 1400}, {"id": 19, "grupo": "Artículos Varios", "rubro": "Guantes, Esponjas y Estropajos", "nombre": "Guantes Preferido (Mediano)", "precio": 1400}, {"id": 20, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Lampazo Mopa N°4", "precio": 4400}, {"id": 21, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Lampazo Mopa N°6", "precio": 5900}, {"id": 22, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Lampazo Mopa N°8", "precio": 6500}, {"id": 23, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Lampazo N°4", "precio": 2800}, {"id": 24, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Lampazo N°6", "precio": 3000}, {"id": 25, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Mopa Mr. Trapo", "precio": 2850}, {"id": 26, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Mopa Virulana", "precio": 5200}, {"id": 27, "grupo": "Artículos Varios", "rubro": "Mopas y Lampazos", "nombre": "Mopa Economica (Tio Mopin)", "precio": 1500}, {"id": 28, "grupo": "Artículos Varios", "rubro": "Mangueras", "nombre": "Manguera Riego 15 Mtrs.", "precio": 5500}, {"id": 29, "grupo": "Artículos Varios", "rubro": "Mangueras", "nombre": "Manguera Riego 20 Mtrs.", "precio": 7500}, {"id": 30, "grupo": "Artículos Varios", "rubro": "Mangueras", "nombre": "Manguera Reforzada 20 Mtrs.", "precio": 9300}, {"id": 31, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Paño Amarillo x 3 U.", "precio": 2200}, {"id": 32, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Paño Multicolor x 12 U.", "precio": 750}, {"id": 33, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Rejilla Americana Payador", "precio": 550}, {"id": 34, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Rejilla Cocina Comun", "precio": 550}, {"id": 35, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Rejilla Pabilo Payador", "precio": 550}, {"id": 36, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Trapo de Piso Gris Mr Trapo", "precio": 1200}, {"id": 37, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Virulana Rollitos x 10 U.", "precio": 900}, {"id": 38, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Secador de Baño 30 Cm", "precio": 2200}, {"id": 39, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Secador de Piso 30 Cm. Virulana", "precio": 3900}, {"id": 40, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Secador de Piso 40 Cm. Virulana", "precio": 3900}, {"id": 41, "grupo": "Artículos Varios", "rubro": "Paños, Rejillas y Secadores", "nombre": "Secador de piso goma x 40 cm", "precio": 2500}, {"id": 42, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Broches Madera", "precio": 1200}, {"id": 43, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Broches Plastico", "precio": 1200}, {"id": 44, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Cabo de Madera con Rosca", "precio": 1200}, {"id": 45, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Pala Plastica con Cabo", "precio": 3800}, {"id": 46, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Sopapa Simple", "precio": 1350}, {"id": 47, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Lustra Muebles Blem", "precio": 10000}, {"id": 48, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Jabon en Pan x 150 Grs.", "precio": 500}, {"id": 49, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Jabon Tipo Odex Sirkis", "precio": 650}, {"id": 50, "grupo": "Artículos Varios", "rubro": "Accesorios y Varios", "nombre": "Detergente Ultra x 5 Ltrs.", "precio": 5600}, {"id": 51, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol al 70% x 5 Ltrs.", "precio": 12100}, {"id": 52, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol al 96% x 5 Ltrs.", "precio": 16500}, {"id": 53, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol de Quemar x 1000 cc", "precio": 3500}, {"id": 54, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol Medicinal 1 Ltr.", "precio": 3100}, {"id": 55, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol Medicinal 1/2 Ltr.", "precio": 2000}, {"id": 56, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol Medicinal 1/4 Ltr.", "precio": 1100}, {"id": 57, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol en Gel x 250 cc", "precio": 1850}, {"id": 58, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Alcoholes", "nombre": "Alcohol en Gel x 5 Ltrs.", "precio": 13750}, {"id": 59, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Lavandinas y Cloro", "nombre": "Lavandina x 5 Ltrs.", "precio": 3200}, {"id": 60, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Lavandinas y Cloro", "nombre": "Lavandina en Gel x 5 Ltrs.", "precio": 6500}, {"id": 61, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Lavandinas y Cloro", "nombre": "Lavandina R/Blanca x 5 Ltrs.", "precio": 3500}, {"id": 62, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Lavandinas y Cloro", "nombre": "Lavandina R/Color x 5 Ltrs.", "precio": 4300}, {"id": 63, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Lavandinas y Cloro", "nombre": "Cloro x 5 Ltrs. Reforzado", "precio": 3900}, {"id": 64, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Lavandinas y Cloro", "nombre": "Cloro x 5 Ltrs. Comun", "precio": 3900}, {"id": 65, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Lavandinas y Cloro", "nombre": "Cloro Puro al 100% x 5 Ltrs.", "precio": 6500}, {"id": 66, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Detergentes y Jabones", "nombre": "Detergente x 5 Ltrs.", "precio": 4900}, {"id": 67, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Detergentes y Jabones", "nombre": "Detergente x 500 cc (Mixto)", "precio": 850}, {"id": 68, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Detergentes y Jabones", "nombre": "Jabon para Manos (todos)", "precio": 5900}, {"id": 69, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Detergentes y Jabones", "nombre": "Jabones Varios Ariel-Skip-Ace-Ala", "precio": 4980}, {"id": 70, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Desengrasante Multi x 5 Ltrs.", "precio": 6900}, {"id": 71, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Limpia Vidrio x 5 Ltrs.", "precio": 5600}, {"id": 72, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Lustra Muebles x 5 Ltrs.", "precio": 8000}, {"id": 73, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Shampoo p/Coches x 5 Ltrs.", "precio": 7000}, {"id": 74, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Brilla Goma x 5 Ltrs.", "precio": 17100}, {"id": 75, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Brilla Piso x 5 Ltrs.", "precio": 10000}, {"id": 76, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Brilla Piso x 500 cc", "precio": 1700}, {"id": 77, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Brilla Piso x 900 cc", "precio": 2800}, {"id": 78, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Quita Manchas x 5 Ltrs.", "precio": 5200}, {"id": 79, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Kaotrina Derribante x 5 Ltrs.", "precio": 4500}, {"id": 80, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Quita Sarro x 5 Ltrs.", "precio": 8250}, {"id": 81, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Desengrasantes y Limpiadores", "nombre": "Quita Sarro x 1 Ltr.", "precio": 2530}, {"id": 82, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Perfumantes y Desodorantes", "nombre": "Desodorante de Piso x 900 cc", "precio": 790}, {"id": 83, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Perfumantes y Desodorantes", "nombre": "Desodorante P/Piso x 5 Ltrs.", "precio": 3500}, {"id": 84, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Perfumantes y Desodorantes", "nombre": "Esencias Piso (Todas)", "precio": 7000}, {"id": 85, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Perfumantes y Desodorantes", "nombre": "Perfuminas x 250 cc", "precio": 7000}, {"id": 86, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Suavizantes de Ropa", "nombre": "Camellito Ropa Fina x 5 Ltrs.", "precio": 5900}, {"id": 87, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Suavizantes de Ropa", "nombre": "Suav. Vivere-Floral-Primavera x 5 Ltrs.", "precio": 4930}, {"id": 88, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Otros", "nombre": "Amonio Cuaternario x 5 Ltrs.", "precio": 2100}, {"id": 89, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Otros", "nombre": "Auyenta Perros x 5 Ltrs.", "precio": 2800}, {"id": 90, "grupo": "Líquidos (Bidones de 5 Litros)", "rubro": "Otros", "nombre": "Atrapa Polvo x 5 Ltrs.", "precio": 25000}];
+
+function fmt(n){ return "$" + Math.round(n).toLocaleString("es-AR"); }
+function priceFor(p){ return p.precio * MULT; }
+
+function groupProducts(list){
+  const groups = {};
+  list.forEach(p=>{
+    if(!groups[p.grupo]) groups[p.grupo] = {};
+    if(!groups[p.grupo][p.rubro]) groups[p.grupo][p.rubro] = [];
+    groups[p.grupo][p.rubro].push(p);
+  });
+  return groups;
+}
+
+function renderCatalogo(){
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const filtered = PRODUCTS.filter(p => p.nombre.toLowerCase().includes(q));
+  const cont = document.getElementById("catalogo");
+  cont.innerHTML = "";
+  if(filtered.length===0){
+    cont.innerHTML = "<div class='no-results'>No encontramos productos con ese nombre.</div>";
+    return;
+  }
+  const groups = groupProducts(filtered);
+  Object.keys(groups).forEach(grupo=>{
+    const gTitle = document.createElement("div");
+    gTitle.className = "grupo-title";
+    gTitle.textContent = grupo;
+    cont.appendChild(gTitle);
+    const rubros = groups[grupo];
+    Object.keys(rubros).forEach(rubro=>{
+      const rDiv = document.createElement("div");
+      rDiv.className = "rubro";
+      const rH = document.createElement("div");
+      rH.className = "rubro-h";
+      rH.textContent = rubro;
+      rDiv.appendChild(rH);
+      rubros[rubro].forEach(p=>{ rDiv.appendChild(renderProductRow(p)); });
+      cont.appendChild(rDiv);
+    });
+  });
+}
+
+function renderProductRow(p){
+  const row = document.createElement("div");
+  row.className = "prod";
+  const qty = cart[p.id] || 0;
+
+  const left = document.createElement("div");
+  left.innerHTML = "<div class='prod-name'>"+p.nombre+"</div><span class='prod-price'>"+fmt(priceFor(p))+"</span>";
+
+  const right = document.createElement("div");
+  right.className = "prod-right";
+  if(qty > 0){
+    const minus = document.createElement("button");
+    minus.className = "qty-btn"; minus.textContent = "–";
+    minus.onclick = ()=>{ changeQty(p.id, -1); };
+    const val = document.createElement("span");
+    val.className = "qty-val"; val.textContent = qty;
+    const plus = document.createElement("button");
+    plus.className = "qty-btn"; plus.textContent = "+";
+    plus.onclick = ()=>{ changeQty(p.id, 1); };
+    right.appendChild(minus); right.appendChild(val); right.appendChild(plus);
+  } else {
+    const add = document.createElement("button");
+    add.className = "add-btn"; add.textContent = "Agregar";
+    add.onclick = ()=>{ changeQty(p.id, 1); };
+    right.appendChild(add);
+  }
+  row.appendChild(left); row.appendChild(right);
+  return row;
+}
+
+function changeQty(id, delta){
+  const cur = cart[id] || 0;
+  const next = Math.max(0, cur + delta);
+  if(next === 0) delete cart[id]; else cart[id] = next;
+  renderAll();
+}
+
+function cartItems(){
+  return Object.keys(cart).map(id=>{
+    const p = PRODUCTS.find(pp=>pp.id === Number(id));
+    return { p, qty: cart[id] };
+  });
+}
+
+function cartSubtotal(){
+  return cartItems().reduce((sum,it)=> sum + priceFor(it.p)*it.qty, 0);
+}
+
+function discountApplies(subtotal){
+  return subtotal > DISCOUNT_THRESHOLD;
+}
+
+function cartDiscount(subtotal){
+  return discountApplies(subtotal) ? subtotal * DISCOUNT_RATE : 0;
+}
+
+function cartTotal(){
+  const sub = cartSubtotal();
+  return sub - cartDiscount(sub);
+}
+
+function renderCartBar(){
+  const count = cartItems().reduce((s,it)=>s+it.qty,0);
+  document.getElementById("cartCount").textContent = count;
+  document.getElementById("cartTotal").textContent = fmt(cartTotal());
+}
+
+function renderCartModal(){
+  const list = document.getElementById("cartList");
+  const items = cartItems();
+  if(items.length === 0){
+    list.innerHTML = "<div class='empty-cart'>Todavía no agregaste productos.</div>";
+  } else {
+    list.innerHTML = "";
+    items.forEach(it=>{
+      const row = document.createElement("div");
+      row.className = "cart-row";
+      row.innerHTML = "<div><div class='nm'>"+it.p.nombre+"</div><div class='sub'>"+it.qty+" x "+fmt(priceFor(it.p))+"</div></div>"+
+        "<div style='display:flex; align-items:center; gap:10px;'><b>"+fmt(priceFor(it.p)*it.qty)+"</b><button class='rm' onclick='removeItem("+it.p.id+")'>Quitar</button></div>";
+      list.appendChild(row);
+    });
+  }
+
+  const sub = cartSubtotal();
+  const disc = cartDiscount(sub);
+  const total = sub - disc;
+
+  const totalsBox = document.getElementById("totalsBox");
+  let html = "<div class='line'><span>Subtotal</span><span>"+fmt(sub)+"</span></div>";
+  if(disc > 0){
+    html += "<div class='line discount'><span>Descuento 10%</span><span>-"+fmt(disc)+"</span></div>";
+  }
+  html += "<div class='line total'><span>Total</span><span>"+fmt(total)+"</span></div>";
+  totalsBox.innerHTML = html;
+
+  const discountMsg = document.getElementById("discountMsg");
+  if(disc > 0){
+    discountMsg.innerHTML = "<div class='discount-note'>✅ Descuento del 10% aplicado por superar los $40.000 (efectivo o transferencia).</div>";
+  } else {
+    const falta = DISCOUNT_THRESHOLD - sub;
+    if(falta > 0 && sub > 0){
+      discountMsg.innerHTML = "<div class='discount-hint'>Te faltan "+fmt(falta)+" para acceder al 10% de descuento (pagando en efectivo o transferencia).</div>";
+    } else {
+      discountMsg.innerHTML = "";
+    }
+  }
+
+  updateWaLink();
+}
+
+function removeItem(id){ delete cart[id]; renderAll(); }
+
+function updateWaLink(){
+  const items = cartItems();
+  const sub = cartSubtotal();
+  const disc = cartDiscount(sub);
+  const total = sub - disc;
+
+  let text = "¡Hola! Te paso el detalle de tu pedido:%0A%0A";
+  items.forEach(it=>{
+    text += "• " + it.p.nombre + " x" + it.qty + " - " + fmt(priceFor(it.p)*it.qty) + "%0A";
+  });
+  text += "%0ASubtotal: " + fmt(sub);
+  if(disc > 0){
+    text += "%0ADescuento 10%25 (efectivo/transferencia): -" + fmt(disc);
+  }
+  text += "%0ATotal: " + fmt(total);
+  text += "%0A%0ADatos para el pago:%0ABanco del Sol%0ATitular: Pac\u00edfico Humberto Montaldi%0ACUIT: 20-27093324-7%0AAlias: limpieza.hm";
+  document.getElementById("waLink").href = "https://wa.me/?text="+text;
+}
+
+function openCart(){ renderCartModal(); document.getElementById("modalBg").classList.add("open"); }
+function closeCart(){ document.getElementById("modalBg").classList.remove("open"); }
+
+function renderAll(){
+  renderCatalogo(); renderCartBar();
+  if(document.getElementById("modalBg").classList.contains("open")) renderCartModal();
+}
+
+document.getElementById("search").addEventListener("input", renderCatalogo);
+renderAll();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'inline-block';
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('installBtn');
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      btn.style.display = 'none';
+    });
+  }
+});
+</script>
+<button id="installBtn" style="display:none; position:fixed; top:10px; right:10px; z-index:60; background:#ffd400; color:#0f2c4d; border:none; border-radius:20px; padding:8px 14px; font-weight:800; font-size:12.5px; cursor:pointer;">📲 Instalar</button>
+</body>
+</html>
