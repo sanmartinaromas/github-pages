@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest-admin.json">
+<link rel="manifest" href="manifest-publico-mayorista.json">
 <meta name="theme-color" content="#1a4f8b">
-<link rel="apple-touch-icon" href="icon-192-blue.png">
-<title>Uso interno · Armar pedido para cliente</title>
+<link rel="apple-touch-icon" href="icon-192-green.png">
+<title>Catálogo · Artículos de Limpieza</title>
 <style>
   :root{
     --ink:#20241f;
@@ -80,12 +80,6 @@
   .discount-note{ font-size:12px; color:#1b7a3d; font-weight:700; text-align:center; margin:8px 0; background:#e2f3e6; border-radius:8px; padding:8px; }
   .discount-hint{ font-size:12px; color:var(--mut); text-align:center; margin:8px 0; }
 
-  .pago-box{ background:#f2f7fd; border:1.5px solid #a9c9f0; border-radius:10px; padding:12px 14px; margin-top:14px; }
-  .pago-title{ font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#1a4f8b; margin-bottom:6px; }
-  .pago-line{ font-size:13px; color:var(--ink); line-height:1.5; }
-  .pago-alias{ margin-top:2px; }
-  .pago-alias b{ background:#ffd400; padding:1px 6px; border-radius:5px; }
-
   .whatsapp-btn{ display:block; width:100%; text-align:center; text-decoration:none; background:#25D366; color:#fff; padding:13px; border-radius:10px; font-weight:700; font-size:14.5px; margin-top:10px; }
   .close-modal{ background:none; border:1px solid var(--line); border-radius:8px; padding:7px 12px; font-size:12.5px; cursor:pointer; float:right; }
   .empty-cart{ color:var(--mut); font-size:13.5px; text-align:center; padding:20px 0; }
@@ -96,8 +90,8 @@
 <header>
   <div class="top">
     <div>
-      <h1>Armar pedido</h1>
-      <span class="tag">Uso interno · Para responderle al cliente</span>
+      <h1>Artículos de Limpieza</h1>
+      <span class="tag">Pedidos por WhatsApp</span>
     </div>
   </div>
   <div class="search-wrap">
@@ -141,25 +135,18 @@
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <button class="close-modal" onclick="closeCart()">Cerrar</button>
-    <h2>Pedido del cliente</h2>
+    <h2>Tu pedido</h2>
     <div id="cartList"></div>
 
     <div class="totals" id="totalsBox"></div>
     <div id="discountMsg"></div>
 
-    <div class="pago-box">
-      <div class="pago-title">Datos de pago</div>
-      <div class="pago-line">Banco del Sol</div>
-      <div class="pago-line">Titular: Pacífico Humberto Montaldi</div>
-      <div class="pago-line">CUIT: 20-27093324-7</div>
-      <div class="pago-line pago-alias">Alias: <b>limpieza.hm</b></div>
-    </div>
-
-    <a id="waLink" class="whatsapp-btn" href="#" target="_blank" rel="noopener">Enviar mensaje al cliente</a>
+    <a id="waLink" class="whatsapp-btn" href="#" target="_blank" rel="noopener">Enviar pedido por WhatsApp</a>
   </div>
 </div>
 
 <script>
+const WHATSAPP_NUMBER = "5492634733777"; // 54 9 2634 733777
 const MULT = 1.40; // precio publico
 const DISCOUNT_THRESHOLD = 40000;
 const DISCOUNT_RATE = 0.10;
@@ -395,7 +382,7 @@ function updateWaLink(){
   const total = sub - disc;
   const promoSub = promoSubtotal();
 
-  let text = "¡Hola! Te paso el detalle de tu pedido:%0A%0A";
+  let text = "Hola! Quiero hacer un pedido:%0A%0A";
   items.forEach(it=>{
     text += "• " + it.p.nombre + " x" + it.qty + " - " + fmt(priceFor(it.p)*it.qty) + "%0A";
   });
@@ -413,8 +400,7 @@ function updateWaLink(){
     text += "%0APromo combo: " + fmt(promoSub);
   }
   text += "%0ATotal: " + fmt(total + promoSub);
-  text += "%0A%0ADatos para el pago:%0ABanco del Sol%0ATitular: Pac\u00edfico Humberto Montaldi%0ACUIT: 20-27093324-7%0AAlias: limpieza.hm";
-  document.getElementById("waLink").href = "https://wa.me/?text="+text;
+  document.getElementById("waLink").href = "https://wa.me/"+WHATSAPP_NUMBER+"?text="+text;
 }
 
 function openCart(){ renderCartModal(); document.getElementById("modalBg").classList.add("open"); }
